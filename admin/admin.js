@@ -91,7 +91,7 @@ async function loadEvents() {
   if (!supabase) return;
 
   const { data, error } = await supabase
-    .from("events")
+    .from("cater_events")
     .select(
       "id,title,event_type,status,budget,budget_label,menu_style,services,plan,event_date,guest_count,updated_at,created_at"
     )
@@ -123,12 +123,12 @@ async function bootAdmin() {
   }
 
   if (!currentProfile) {
-    setSessionStatus("Tu usuario no tiene profile. Ejecuta supabase/schema.sql o crea el perfil.");
+    setSessionStatus("Tu usuario no tiene cater_profile. Ejecuta supabase/schema.sql o crea el perfil.");
     return;
   }
 
   if (!["admin", "staff", "client"].includes(currentProfile.role)) {
-    setSessionStatus("Rol no reconocido. Revisa public.profiles.role.");
+    setSessionStatus("Rol no reconocido. Revisa public.cater_profiles.role.");
     return;
   }
 
@@ -155,7 +155,7 @@ eventForm.addEventListener("submit", async (event) => {
     services: [],
   };
 
-  const { error } = await supabase.from("events").insert({
+  const { error } = await supabase.from("cater_events").insert({
     title: eventTitle.value.trim(),
     event_type: eventType.value,
     budget_label: budgetLabel,
@@ -222,4 +222,3 @@ window.addEventListener("beforeunload", () => {
 bootAdmin().catch((error) => {
   setSessionStatus(error.message);
 });
-

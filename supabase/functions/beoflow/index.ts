@@ -204,7 +204,7 @@ async function persistBeoflowRun(
   if (!user) return;
 
   const { data: accessibleEvent, error: accessError } = await userClient
-    .from("events")
+    .from("cater_events")
     .select("id")
     .eq("id", eventId)
     .maybeSingle();
@@ -214,7 +214,7 @@ async function persistBeoflowRun(
   const serviceClient = createClient(supabaseUrl, serviceRoleKey);
   const nextPlan = mergedPlan(currentPlan, result.updates);
 
-  await serviceClient.from("beoflow_messages").insert([
+  await serviceClient.from("cater_beoflow_messages").insert([
     {
       event_id: eventId,
       user_id: user.id,
@@ -236,7 +236,7 @@ async function persistBeoflowRun(
   ]);
 
   const { data: latestVersion } = await serviceClient
-    .from("plan_versions")
+    .from("cater_plan_versions")
     .select("version_number")
     .eq("event_id", eventId)
     .order("version_number", { ascending: false })
@@ -245,7 +245,7 @@ async function persistBeoflowRun(
 
   const versionNumber = (latestVersion?.version_number || 0) + 1;
 
-  await serviceClient.from("plan_versions").insert({
+  await serviceClient.from("cater_plan_versions").insert({
     event_id: eventId,
     version_number: versionNumber,
     plan: nextPlan,
@@ -254,7 +254,7 @@ async function persistBeoflowRun(
   });
 
   await serviceClient
-    .from("events")
+    .from("cater_events")
     .update({
       budget: nextPlan.budget || null,
       budget_label: nextPlan.budgetLabel || null,

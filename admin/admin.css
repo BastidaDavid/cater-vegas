@@ -149,6 +149,11 @@ h2 {
   grid-column: 1 / -1;
 }
 
+.workspace-overview,
+.requests-admin {
+  min-height: 100%;
+}
+
 .event-form,
 .event-form label,
 #adminBeoflowForm,
@@ -258,7 +263,10 @@ textarea {
 
 .event-row,
 .collaborator-row,
-.assignment-row {
+.assignment-row,
+.request-row,
+.customer-row,
+.workspace-stat {
   display: grid;
   gap: 0.45rem;
   border: 1px solid rgba(185, 144, 91, 0.18);
@@ -285,25 +293,41 @@ textarea {
 
 .event-row strong,
 .collaborator-row strong,
-.assignment-row strong {
+.assignment-row strong,
+.request-row strong,
+.customer-row strong,
+.workspace-stat strong {
   display: block;
   font-size: 1rem;
 }
 
 .event-meta,
 .collaborator-meta,
-.assignment-meta {
+.assignment-meta,
+.request-meta,
+.customer-meta,
+.workspace-meta {
   color: var(--muted);
   font-size: 0.78rem;
 }
 
 .collaborator-list,
+.request-list,
+.customer-list,
+.workspace-summary,
 .assignment-list {
   display: grid;
   gap: 0.75rem;
 }
 
 .collaborator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.request-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;

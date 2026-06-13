@@ -21,6 +21,8 @@ type BeoflowResult = {
   suggestions: string[];
   source?: "openai" | "local";
   collaboratorAction?: CollaboratorActionResult | null;
+  customerAction?: CustomerActionResult | null;
+  eventAction?: EventActionResult | null;
 };
 
 type CollaboratorCommand = {
@@ -37,6 +39,33 @@ type CollaboratorActionResult = {
   eventId: number | null;
   eventTitle: string | null;
   assigned: boolean;
+  message: string;
+};
+
+type CustomerCommand = {
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+};
+
+type CustomerActionResult = {
+  customerId: number;
+  customerName: string;
+  created: boolean;
+  message: string;
+};
+
+type EventForCustomerCommand = {
+  customerName: string;
+  email: string | null;
+  eventTitle: string | null;
+};
+
+type EventActionResult = {
+  eventId: number;
+  eventTitle: string;
+  customerId: number;
+  customerName: string;
   message: string;
 };
 
@@ -138,7 +167,7 @@ async function callOpenAI(message: string, currentPlan: CaterPlan): Promise<Beof
         {
           role: "system",
           content:
-            "You are BEOFlow, an event planning brain for Cater Vegas. Return only compact JSON with reply, updates, and suggestions. updates must include budget, budgetLabel, eventType, menuStyle, and services. Never invent final prices.",
+            "You are BEOFlow, an event planning brain for a workspace inside BEOFlow Platform. Return only compact JSON with reply, updates, and suggestions. updates must include budget, budgetLabel, eventType, menuStyle, and services. Never invent final prices.",
         },
         {
           role: "user",
@@ -290,25 +319,109 @@ function parseCollaboratorCommand(message: string): CollaboratorCommand | null {
   return null;
 }
 
-async function getCurrentCaterRole(userClient: ReturnType<typeof createClient>, userId: string) {
-  const { data } = await userClient
+function parseCustomerCommand(message: string): CustomerCommand | null {
+  const normalized = normalizeText(message);
+
+  if (normalized.includes("evento para") || normalized.includes("event for")) {
+    return null;
+  }
+
+  const patterns = [
+    /(?:crea|crear|agrega|agregar|añade|anade)\s+(?:cliente|customer)\s+(.+?)(?:\s+(?:con|with)\s+(?:email|correo)\s+(\S+))?$/i,
+    /(?:cliente|customer)\s+(.+?)(?:\s+(?:con|with)\s+(?:email|correo)\s+(\S+))?$/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = message.match(pattern);
+    if (!match) continue;
+
+    const email = match[2] || message.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || null;
+    const phone = message.match(/(?:\+?\d[\d\s().-]{6,}\d)/)?.[0]?.trim() || null;
+    const fullName = cleanName(match[1]);
+
+    if (!fullName) return null;
+    return { fullName, email, phone };
+  }
+
+  return null;
+}
+
+function parseEventForCustomerCommand(message: string): EventForCustomerCommand | null {
+  const patterns = [
+    /(?:crea|crear|agenda|programa)\s+(?:un\s+|el\s+)?evento\s+(?:para|de)\s+(.+?)(?:\s+(?:con|with)\s+(?:email|correo)\s+(\S+))?$/i,
+    /(?:create|schedule)\s+(?:an?\s+)?event\s+for\s+(.+?)(?:\s+with\s+email\s+(\S+))?$/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = message.match(pattern);
+    if (!match) continue;
+
+    const email = match[2] || message.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || null;
+    const customerName = cleanName(match[1]);
+
+    if (!customerName) return null;
+    return {
+      customerName,
+      email,
+      eventTitle: `Evento para ${customerName}`,
+    };
+  }
+
+  return null;
+}
+
+function profileRoleToWorkspaceRole(role: string | null) {
+  const roleMap: Record<string, string> = {
+    admin: "admin",
+    staff: "organizer",
+    organizer: "organizer",
+    collaborator: "collaborator",
+    client: "viewer",
+  };
+
+  return role ? roleMap[role] || null : null;
+}
+
+async function getCurrentWorkspaceRole(
+  userClient: ReturnType<typeof createClient>,
+  userId: string,
+  workspaceId: string,
+) {
+  const { data: membership } = await userClient
+    .from("beoflow_workspace_members")
+    .select("role,status")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (membership?.status === "active" && membership.role) {
+    return membership.role;
+  }
+
+  const { data: profile } = await userClient
     .from("cater_profiles")
-    .select("role")
+    .select("role,workspace_id")
     .eq("id", userId)
     .maybeSingle();
 
-  return data?.role || null;
+  if (profile?.workspace_id === workspaceId) {
+    return profileRoleToWorkspaceRole(profile.role);
+  }
+
+  return null;
 }
 
 async function findAccessibleEvent(
   userClient: ReturnType<typeof createClient>,
   eventId: number | null,
   eventHint: string | null,
+  workspaceId: string,
 ) {
   if (eventId) {
     const { data } = await userClient
       .from("cater_events")
       .select("id,title")
+      .eq("workspace_id", workspaceId)
       .eq("id", eventId)
       .maybeSingle();
 
@@ -320,6 +433,7 @@ async function findAccessibleEvent(
   const { data: directMatch } = await userClient
     .from("cater_events")
     .select("id,title")
+    .eq("workspace_id", workspaceId)
     .ilike("title", `%${eventHint}%`)
     .limit(1)
     .maybeSingle();
@@ -329,6 +443,7 @@ async function findAccessibleEvent(
   const { data: candidates } = await userClient
     .from("cater_events")
     .select("id,title")
+    .eq("workspace_id", workspaceId)
     .order("updated_at", { ascending: false })
     .limit(50);
 
@@ -366,6 +481,7 @@ async function upsertCollaboratorFromCommand(
     const { data, error } = await serviceClient
       .from("cater_collaborators")
       .update(payload)
+      .eq("workspace_id", workspaceId)
       .eq("id", existing.id)
       .select("id,full_name,email,role,status")
       .single();
@@ -394,8 +510,8 @@ async function handleCollaboratorCommand(params: {
 }): Promise<CollaboratorActionResult | null> {
   if (!params.command) return null;
 
-  const role = await getCurrentCaterRole(params.userClient, params.userId);
-  if (role !== "admin") {
+  const role = await getCurrentWorkspaceRole(params.userClient, params.userId, params.workspaceId);
+  if (!["owner", "admin"].includes(role || "")) {
     return {
       collaboratorId: 0,
       collaboratorName: params.command.fullName,
@@ -403,7 +519,7 @@ async function handleCollaboratorCommand(params: {
       eventId: null,
       eventTitle: null,
       assigned: false,
-      message: "Solo un admin de Cater Vegas puede crear o actualizar colaboradores.",
+      message: "Solo owner/admin del workspace puede crear o actualizar colaboradores.",
     };
   }
 
@@ -411,6 +527,7 @@ async function handleCollaboratorCommand(params: {
     params.userClient,
     params.eventId,
     params.command.eventHint,
+    params.workspaceId,
   );
   const collaborator = await upsertCollaboratorFromCommand(
     params.serviceClient,
@@ -423,6 +540,7 @@ async function handleCollaboratorCommand(params: {
   if (targetEvent?.id) {
     const { error } = await params.serviceClient.from("cater_event_assignments").upsert(
       {
+        workspace_id: params.workspaceId,
         event_id: targetEvent.id,
         collaborator_id: collaborator.id,
         assignment_role: params.command.role,
@@ -446,6 +564,142 @@ async function handleCollaboratorCommand(params: {
     message: assigned
       ? `${collaborator.full_name} quedó como ${params.command.role} en ${targetEvent.title}.`
       : `${collaborator.full_name} quedó guardado como ${params.command.role}.`,
+  };
+}
+
+async function upsertCustomerFromCommand(
+  serviceClient: ReturnType<typeof createClient>,
+  command: CustomerCommand,
+  workspaceId: string,
+) {
+  const baseQuery = serviceClient
+    .from("cater_customers")
+    .select("id,full_name,email,phone,notes")
+    .eq("workspace_id", workspaceId);
+
+  const { data: existing } = command.email
+    ? await baseQuery.ilike("email", command.email).maybeSingle()
+    : await baseQuery.ilike("full_name", command.fullName).limit(1).maybeSingle();
+
+  const payload = {
+    workspace_id: workspaceId,
+    full_name: command.fullName,
+    email: command.email,
+    phone: command.phone,
+  };
+
+  if (existing?.id) {
+    const { data, error } = await serviceClient
+      .from("cater_customers")
+      .update(payload)
+      .eq("workspace_id", workspaceId)
+      .eq("id", existing.id)
+      .select("id,full_name,email,phone")
+      .single();
+
+    if (error) throw error;
+    return { customer: data, created: false };
+  }
+
+  const { data, error } = await serviceClient
+    .from("cater_customers")
+    .insert(payload)
+    .select("id,full_name,email,phone")
+    .single();
+
+  if (error) throw error;
+  return { customer: data, created: true };
+}
+
+async function handleCustomerCommand(params: {
+  command: CustomerCommand | null;
+  userClient: ReturnType<typeof createClient>;
+  serviceClient: ReturnType<typeof createClient>;
+  userId: string;
+  workspaceId: string;
+}): Promise<CustomerActionResult | null> {
+  if (!params.command) return null;
+
+  const role = await getCurrentWorkspaceRole(params.userClient, params.userId, params.workspaceId);
+  if (!["owner", "admin", "organizer"].includes(role || "")) {
+    return {
+      customerId: 0,
+      customerName: params.command.fullName,
+      created: false,
+      message: "Solo owner/admin/organizer del workspace puede crear clientes.",
+    };
+  }
+
+  const { customer, created } = await upsertCustomerFromCommand(
+    params.serviceClient,
+    params.command,
+    params.workspaceId,
+  );
+
+  return {
+    customerId: customer.id,
+    customerName: customer.full_name,
+    created,
+    message: created
+      ? `${customer.full_name} quedó creado como customer.`
+      : `${customer.full_name} quedó actualizado como customer.`,
+  };
+}
+
+async function handleEventForCustomerCommand(params: {
+  command: EventForCustomerCommand | null;
+  userClient: ReturnType<typeof createClient>;
+  serviceClient: ReturnType<typeof createClient>;
+  userId: string;
+  workspaceId: string;
+}): Promise<EventActionResult | null> {
+  if (!params.command) return null;
+
+  const role = await getCurrentWorkspaceRole(params.userClient, params.userId, params.workspaceId);
+  if (!["owner", "admin", "organizer"].includes(role || "")) {
+    return {
+      eventId: 0,
+      eventTitle: params.command.eventTitle || `Evento para ${params.command.customerName}`,
+      customerId: 0,
+      customerName: params.command.customerName,
+      message: "Solo owner/admin/organizer del workspace puede crear eventos.",
+    };
+  }
+
+  const { customer } = await upsertCustomerFromCommand(
+    params.serviceClient,
+    {
+      fullName: params.command.customerName,
+      email: params.command.email,
+      phone: null,
+    },
+    params.workspaceId,
+  );
+
+  const eventTitle = params.command.eventTitle || `Evento para ${customer.full_name}`;
+  const { data: event, error } = await params.serviceClient
+    .from("cater_events")
+    .insert({
+      workspace_id: params.workspaceId,
+      customer_id: customer.id,
+      title: eventTitle,
+      status: "draft",
+      created_by: params.userId,
+      plan: {
+        customerName: customer.full_name,
+      },
+    })
+    .select("id,title,customer_id")
+    .single();
+
+  if (error) throw error;
+
+  return {
+    eventId: event.id,
+    eventTitle: event.title,
+    customerId: customer.id,
+    customerName: customer.full_name,
+    message: `${event.title} quedó creado para ${customer.full_name}.`,
   };
 }
 
@@ -479,6 +733,37 @@ async function persistBeoflowRun(
   if (!user) return;
 
   const serviceClient = createClient(supabaseUrl, serviceRoleKey);
+  let targetEventId = eventId;
+
+  const eventCommand = parseEventForCustomerCommand(message);
+  const eventAction = await handleEventForCustomerCommand({
+    command: eventCommand,
+    userClient,
+    serviceClient,
+    userId: user.id,
+    workspaceId,
+  });
+
+  if (eventAction) {
+    result.eventAction = eventAction;
+    result.reply = `${result.reply} ${eventAction.message}`;
+    if (eventAction.eventId > 0) targetEventId = eventAction.eventId;
+  }
+
+  const customerCommand = eventCommand ? null : parseCustomerCommand(message);
+  const customerAction = await handleCustomerCommand({
+    command: customerCommand,
+    userClient,
+    serviceClient,
+    userId: user.id,
+    workspaceId,
+  });
+
+  if (customerAction) {
+    result.customerAction = customerAction;
+    result.reply = `${result.reply} ${customerAction.message}`;
+  }
+
   const collaboratorCommand = parseCollaboratorCommand(message);
   const collaboratorAction = await handleCollaboratorCommand({
     command: collaboratorCommand,
@@ -494,12 +779,13 @@ async function persistBeoflowRun(
     result.reply = `${result.reply} ${collaboratorAction.message}`;
   }
 
-  if (!eventId) return;
+  if (!targetEventId) return;
 
   const { data: accessibleEvent, error: accessError } = await userClient
     .from("cater_events")
     .select("id")
-    .eq("id", eventId)
+    .eq("workspace_id", workspaceId)
+    .eq("id", targetEventId)
     .maybeSingle();
 
   if (accessError || !accessibleEvent) return;
@@ -508,14 +794,16 @@ async function persistBeoflowRun(
 
   await serviceClient.from("cater_beoflow_messages").insert([
     {
-      event_id: eventId,
+      workspace_id: workspaceId,
+      event_id: targetEventId,
       user_id: user.id,
       sender: "user",
       content: message,
       metadata: { currentPlan },
     },
     {
-      event_id: eventId,
+      workspace_id: workspaceId,
+      event_id: targetEventId,
       user_id: user.id,
       sender: "assistant",
       content: result.reply,
@@ -524,6 +812,8 @@ async function persistBeoflowRun(
         suggestions: result.suggestions,
         source: result.source,
         collaboratorAction,
+        customerAction,
+        eventAction,
       },
     },
   ]);
@@ -531,7 +821,8 @@ async function persistBeoflowRun(
   const { data: latestVersion } = await serviceClient
     .from("cater_plan_versions")
     .select("version_number")
-    .eq("event_id", eventId)
+    .eq("workspace_id", workspaceId)
+    .eq("event_id", targetEventId)
     .order("version_number", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -539,7 +830,8 @@ async function persistBeoflowRun(
   const versionNumber = (latestVersion?.version_number || 0) + 1;
 
   await serviceClient.from("cater_plan_versions").insert({
-    event_id: eventId,
+    workspace_id: workspaceId,
+    event_id: targetEventId,
     version_number: versionNumber,
     plan: nextPlan,
     source: "beoflow",
@@ -556,7 +848,8 @@ async function persistBeoflowRun(
       services: nextPlan.services || [],
       plan: nextPlan,
     })
-    .eq("id", eventId);
+    .eq("workspace_id", workspaceId)
+    .eq("id", targetEventId);
 }
 
 Deno.serve(async (request) => {
@@ -576,7 +869,7 @@ Deno.serve(async (request) => {
     const message = String(body.message || "").trim();
     const currentPlan = (body.currentPlan || {}) as CaterPlan;
     const eventId = body.eventId ? Number(body.eventId) : null;
-    const workspaceId = String(body.workspaceId || DEFAULT_WORKSPACE_ID);
+    const workspaceId = String(body.workspaceId || body.workspace_id || DEFAULT_WORKSPACE_ID);
 
     if (!message) {
       return new Response(JSON.stringify({ error: "Message is required" }), {

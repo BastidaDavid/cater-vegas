@@ -1,10 +1,11 @@
 import {
+  DEFAULT_WORKSPACE_ID,
   isSupabaseConfigured,
   requireSupabase,
   subscribeToEvents,
 } from "./lib/supabaseClient.js";
 
-const WORKSPACE_ID = "cater-vegas";
+const WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 const supabase = isSupabaseConfigured ? requireSupabase() : null;
 const hero = document.querySelector(".hero");
 const panels = document.querySelectorAll("[data-panel]");
@@ -218,6 +219,7 @@ function initEventsRealtime() {
   try {
     eventsRealtimeChannel = subscribeToEvents(syncPlanFromRealtime, {
       channelName: "cater-vegas-home-events",
+      workspaceId: WORKSPACE_ID,
     });
   } catch (error) {
     console.warn("Supabase Realtime unavailable", error);

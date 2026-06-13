@@ -172,7 +172,11 @@
     </main>
 
     <script type="module">
-      import { isSupabaseConfigured, requireSupabase } from "./lib/supabaseClient.js";
+      import {
+        isSupabaseConfigured,
+        requireSupabase,
+        resolvePostLoginPath,
+      } from "./lib/supabaseClient.js";
 
       const authForm = document.querySelector("#authForm");
       const emailInput = document.querySelector("#authEmail");
@@ -197,6 +201,12 @@
         const { data } = await supabase.auth.getSession();
         if (data.session) {
           setStatus(`Sesión activa: ${data.session.user.email}`);
+          try {
+            const nextPath = await resolvePostLoginPath();
+            window.location.href = nextPath;
+          } catch (routeError) {
+            setStatus(routeError.message);
+          }
         }
       }
 
@@ -215,19 +225,16 @@
           return;
         }
 
-        window.location.href = "admin/";
+        try {
+          const nextPath = await resolvePostLoginPath();
+          window.location.href = nextPath;
+        } catch (routeError) {
+          setStatus(routeError.message);
+        }
       });
 
-      signupButton.addEventListener("click", async () => {
-        if (!supabase) return;
-
-        setStatus("Creando cuenta...");
-        const { error } = await supabase.auth.signUp({
-          email: emailInput.value.trim(),
-          password: passwordInput.value,
-        });
-
-        setStatus(error ? error.message : "Cuenta creada. Revisa tu email si Supabase pide confirmación.");
+      signupButton.addEventListener("click", () => {
+        window.location.href = "create-account.html";
       });
 
       magicLinkButton.addEventListener("click", async () => {
@@ -254,4 +261,3 @@
     </script>
   </body>
 </html>
-

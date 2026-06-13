@@ -25,6 +25,37 @@
       </section>
 
       <section class="admin-grid">
+        <section class="admin-card workspace-overview">
+          <div class="events-heading">
+            <div>
+              <p class="admin-kicker">Workspace</p>
+              <h2>BEOFlow Platform</h2>
+            </div>
+            <button id="refreshWorkspaceButton" type="button">Actualizar</button>
+          </div>
+          <div class="workspace-summary" id="workspaceSummary" aria-live="polite"></div>
+        </section>
+
+        <section class="admin-card requests-admin" id="requestsSection">
+          <div class="events-heading">
+            <div>
+              <p class="admin-kicker">User Requests</p>
+              <h2>Aprobaciones</h2>
+            </div>
+            <button id="refreshRequestsButton" type="button">Actualizar</button>
+          </div>
+          <p class="admin-status" id="requestsStatus" aria-live="polite"></p>
+          <div class="request-list" id="userRequestsList" aria-live="polite"></div>
+
+          <div class="assignment-panel">
+            <div>
+              <p class="admin-kicker">Customers</p>
+              <h3>Clientes del workspace</h3>
+            </div>
+            <div class="customer-list" id="customersList" aria-live="polite"></div>
+          </div>
+        </section>
+
         <form class="admin-card event-form" id="eventForm">
           <div>
             <p class="admin-kicker">Nuevo evento</p>

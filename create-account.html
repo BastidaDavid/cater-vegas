@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Crear cuenta para BEOFlow Platform y Cater Vegas." />
+    <title>BEOFlow | Crear cuenta</title>
+    <link rel="stylesheet" href="style.css?v=scale-2" />
+    <style>
+      body {
+        min-height: 100vh;
+        min-height: 100svh;
+        overflow: auto;
+      }
+
+      .account-shell {
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: clamp(5.5rem, 12vh, 8rem) var(--page-gutter) 3rem;
+        background:
+          linear-gradient(180deg, rgba(185, 144, 91, 0.11), transparent 34%),
+          linear-gradient(145deg, #020202 0%, var(--black) 58%, #0a0a0a 100%);
+      }
+
+      .account-wrap {
+        display: grid;
+        gap: 1rem;
+        width: min(1120px, 100%);
+        margin: 0 auto;
+      }
+
+      .account-hero {
+        display: grid;
+        gap: 0.8rem;
+        max-width: 48rem;
+      }
+
+      .account-kicker {
+        margin: 0;
+        color: var(--gold-light);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .account-hero h1 {
+        margin: 0;
+        font-size: clamp(2.6rem, 8vw, 5.6rem);
+        line-height: 0.9;
+      }
+
+      .account-hero p,
+      .account-card p,
+      .account-status {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .account-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .account-card,
+      .account-form-panel {
+        border: 1px solid rgba(185, 144, 91, 0.24);
+        border-radius: 1.2rem;
+        background: rgba(12, 12, 12, 0.88);
+        box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.24);
+        padding: clamp(1.1rem, 3vw, 1.6rem);
+      }
+
+      .account-card {
+        display: grid;
+        gap: 0.8rem;
+        text-align: left;
+      }
+
+      .account-card.is-selected {
+        border-color: rgba(214, 178, 124, 0.78);
+      }
+
+      .account-card h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 1.25rem;
+      }
+
+      .account-card button,
+      .account-button {
+        border: 0;
+        border-radius: 999px;
+        background: var(--gold);
+        color: #050505;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        padding: 0.95rem 1rem;
+        text-transform: uppercase;
+      }
+
+      .account-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .account-form label {
+        display: grid;
+        gap: 0.42rem;
+        color: rgba(245, 241, 234, 0.76);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .account-form input {
+        width: 100%;
+        border: 1px solid rgba(185, 144, 91, 0.26);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.045);
+        color: var(--text);
+        outline: 0;
+        padding: 0.94rem 1rem;
+      }
+
+      .account-form .wide-field,
+      .account-status,
+      .account-button {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 820px) {
+        .account-grid,
+        .account-form {
+          grid-template-columns: 1fr;
+        }
+
+        .account-form .wide-field,
+        .account-status,
+        .account-button {
+          grid-column: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" aria-label="Encabezado principal">
+      <a class="logo" href="index.html" aria-label="Cater Vegas inicio">BEOFlow</a>
+      <nav class="desktop-nav">
+        <a href="login.html">Login</a>
+        <a href="index.html">Cater Vegas</a>
+      </nav>
+    </header>
+
+    <main class="account-shell">
+      <div class="account-wrap">
+        <section class="account-hero">
+          <p class="account-kicker">BEOFlow Platform</p>
+          <h1>Crear cuenta</h1>
+          <p>
+            Elige el tipo de acceso. Las cuentas de negocio, organizadores y colaboradores
+            quedan pendientes hasta que un admin las apruebe.
+          </p>
+        </section>
+
+        <section class="account-grid" aria-label="Tipo de cuenta">
+          <article class="account-card is-selected" data-account-card="business">
+            <p class="account-kicker">Workspace</p>
+            <h2>Soy negocio</h2>
+            <p>Solicita un workspace para usar BEOFlow con tu empresa.</p>
+            <button type="button">Elegir</button>
+          </article>
+
+          <article class="account-card" data-account-card="collaborator">
+            <p class="account-kicker">Equipo</p>
+            <h2>Soy colaborador</h2>
+            <p>Solicita acceso al workspace Cater Vegas como staff u organizador.</p>
+            <button type="button">Elegir</button>
+          </article>
+
+          <article class="account-card" data-account-card="customer">
+            <p class="account-kicker">Evento</p>
+            <h2>Soy cliente</h2>
+            <p>Crea tu cuenta como cliente final para eventos de Cater Vegas.</p>
+            <button type="button">Elegir</button>
+          </article>
+        </section>
+
+        <section class="account-form-panel" aria-labelledby="account-form-title">
+          <p class="account-kicker" id="accountTypeLabel">Workspace pending</p>
+          <h2 id="account-form-title">Datos de la cuenta</h2>
+
+          <form class="account-form" id="accountForm">
+            <label>
+              Nombre
+              <input id="fullName" type="text" autocomplete="name" required />
+            </label>
+
+            <label>
+              Email
+              <input id="accountEmail" type="email" autocomplete="email" required />
+            </label>
+
+            <label>
+              Password
+              <input id="accountPassword" type="password" autocomplete="new-password" minlength="6" required />
+            </label>
+
+            <label>
+              Teléfono
+              <input id="accountPhone" type="tel" autocomplete="tel" />
+            </label>
+
+            <label class="wide-field">
+              Empresa / contexto
+              <input id="accountCompany" type="text" placeholder="Cater Vegas, venue, agencia o nombre de evento" />
+            </label>
+
+            <button class="account-button" type="submit">Crear solicitud</button>
+            <p class="account-status" id="accountStatus" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <script type="module">
+      import {
+        DEFAULT_WORKSPACE_ID,
+        isSupabaseConfigured,
+        requireSupabase,
+      } from "./lib/supabaseClient.js";
+
+      const cards = [...document.querySelectorAll("[data-account-card]")];
+      const form = document.querySelector("#accountForm");
+      const fullName = document.querySelector("#fullName");
+      const email = document.querySelector("#accountEmail");
+      const password = document.querySelector("#accountPassword");
+      const phone = document.querySelector("#accountPhone");
+      const company = document.querySelector("#accountCompany");
+      const status = document.querySelector("#accountStatus");
+      const typeLabel = document.querySelector("#accountTypeLabel");
+
+      const accountLabels = {
+        business: "Workspace pending",
+        collaborator: "Collaborator pending",
+        customer: "Customer pending",
+      };
+
+      let accountType = "business";
+      const supabase = isSupabaseConfigured ? requireSupabase() : null;
+
+      function setStatus(message) {
+        status.textContent = message;
+      }
+
+      function safeSlug(value) {
+        return String(value || "workspace")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 48) || "workspace";
+      }
+
+      function selectAccountType(type) {
+        accountType = type;
+        typeLabel.textContent = accountLabels[type];
+        cards.forEach((card) => {
+          card.classList.toggle("is-selected", card.dataset.accountCard === type);
+        });
+      }
+
+      async function upsertProfile(userId, workspaceId, role) {
+        const { error } = await supabase.from("cater_profiles").upsert({
+          id: userId,
+          workspace_id: workspaceId,
+          full_name: fullName.value.trim(),
+          email: email.value.trim(),
+          phone: phone.value.trim() || null,
+          company: company.value.trim() || null,
+          role,
+        });
+
+        if (error) throw error;
+      }
+
+      async function createPendingAccess(user) {
+        if (accountType === "business") {
+          const workspaceName = company.value.trim() || fullName.value.trim();
+          const slug = `${safeSlug(workspaceName)}-${user.id.slice(0, 8)}`;
+
+          const { error: workspaceError } = await supabase.from("beoflow_workspaces").insert({
+            id: slug,
+            name: workspaceName,
+            slug,
+            industry: "catering_events",
+            status: "pending",
+            owner_id: user.id,
+          });
+
+          if (workspaceError) throw workspaceError;
+
+          await upsertProfile(user.id, slug, "workspace_pending");
+
+          const { error: memberError } = await supabase.from("beoflow_workspace_members").upsert(
+            {
+              workspace_id: slug,
+              user_id: user.id,
+              role: "owner",
+              status: "pending",
+            },
+            { onConflict: "workspace_id,user_id" }
+          );
+
+          if (memberError) throw memberError;
+          return;
+        }
+
+        if (accountType === "collaborator") {
+          await upsertProfile(user.id, DEFAULT_WORKSPACE_ID, "collaborator_pending");
+          const { error } = await supabase.from("beoflow_workspace_members").upsert(
+            {
+              workspace_id: DEFAULT_WORKSPACE_ID,
+              user_id: user.id,
+              role: "collaborator",
+              status: "pending",
+            },
+            { onConflict: "workspace_id,user_id" }
+          );
+
+          if (error) throw error;
+          return;
+        }
+
+        await upsertProfile(user.id, DEFAULT_WORKSPACE_ID, "client_pending");
+
+        const { error: memberError } = await supabase.from("beoflow_workspace_members").upsert(
+          {
+            workspace_id: DEFAULT_WORKSPACE_ID,
+            user_id: user.id,
+            role: "viewer",
+            status: "pending",
+          },
+          { onConflict: "workspace_id,user_id" }
+        );
+
+        if (memberError) throw memberError;
+
+        const customerPayload = {
+          workspace_id: DEFAULT_WORKSPACE_ID,
+          full_name: fullName.value.trim(),
+          email: email.value.trim(),
+          phone: phone.value.trim() || null,
+          notes: company.value.trim() || null,
+        };
+
+        const { data: existingCustomer, error: lookupError } = await supabase
+          .from("cater_customers")
+          .select("id")
+          .eq("workspace_id", DEFAULT_WORKSPACE_ID)
+          .ilike("email", email.value.trim())
+          .maybeSingle();
+
+        if (lookupError) throw lookupError;
+
+        const customerWrite = existingCustomer?.id
+          ? supabase.from("cater_customers").update(customerPayload).eq("id", existingCustomer.id)
+          : supabase.from("cater_customers").insert(customerPayload);
+
+        const { error: customerError } = await customerWrite;
+
+        if (customerError) throw customerError;
+      }
+
+      cards.forEach((card) => {
+        card.addEventListener("click", () => selectAccountType(card.dataset.accountCard));
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!supabase) {
+          setStatus("Configura Supabase antes de crear cuentas.");
+          return;
+        }
+
+        const roleByType = {
+          business: "workspace_pending",
+          collaborator: "collaborator_pending",
+          customer: "client_pending",
+        };
+
+        setStatus("Creando cuenta...");
+
+        const { data, error } = await supabase.auth.signUp({
+          email: email.value.trim(),
+          password: password.value,
+          options: {
+            data: {
+              full_name: fullName.value.trim(),
+              phone: phone.value.trim(),
+              company: company.value.trim(),
+              cater_role: roleByType[accountType],
+              workspace_id: DEFAULT_WORKSPACE_ID,
+            },
+            emailRedirectTo: new URL("login.html", window.location.href).href,
+          },
+        });
+
+        if (error) {
+          setStatus(error.message);
+          return;
+        }
+
+        if (data.user && data.session) {
+          try {
+            await createPendingAccess(data.user);
+            window.location.href = "pending.html";
+          } catch (requestError) {
+            setStatus(requestError.message);
+          }
+          return;
+        }
+
+        window.location.href = "pending.html?confirm=1";
+      });
+    </script>
+  </body>
+</html>

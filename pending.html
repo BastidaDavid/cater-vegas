@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Cuenta pendiente de aprobación en BEOFlow." />
+    <title>BEOFlow | Pendiente</title>
+    <link rel="stylesheet" href="style.css?v=scale-2" />
+    <style>
+      body {
+        min-height: 100vh;
+        min-height: 100svh;
+        overflow: auto;
+      }
+
+      .pending-shell {
+        display: grid;
+        min-height: 100vh;
+        min-height: 100svh;
+        place-items: center;
+        padding: clamp(5.5rem, 12vh, 8rem) var(--page-gutter) 3rem;
+        background:
+          linear-gradient(180deg, rgba(185, 144, 91, 0.11), transparent 34%),
+          linear-gradient(145deg, #020202 0%, var(--black) 58%, #0a0a0a 100%);
+      }
+
+      .pending-panel {
+        width: min(100%, 34rem);
+        border: 1px solid rgba(185, 144, 91, 0.24);
+        border-radius: 1.3rem;
+        background: rgba(12, 12, 12, 0.88);
+        box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.24);
+        padding: clamp(1.4rem, 4vw, 2.3rem);
+      }
+
+      .pending-kicker {
+        margin: 0;
+        color: var(--gold-light);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .pending-panel h1 {
+        margin: 0.8rem 0 0;
+        font-size: clamp(2.2rem, 8vw, 4.8rem);
+        line-height: 0.9;
+      }
+
+      .pending-panel p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .pending-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.3rem;
+      }
+
+      .pending-actions a {
+        border: 1px solid rgba(185, 144, 91, 0.32);
+        border-radius: 999px;
+        color: var(--gold-light);
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        padding: 0.85rem 1rem;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" aria-label="Encabezado principal">
+      <a class="logo" href="index.html" aria-label="Cater Vegas inicio">BEOFlow</a>
+    </header>
+
+    <main class="pending-shell">
+      <section class="pending-panel" aria-labelledby="pending-title">
+        <p class="pending-kicker">Solicitud recibida</p>
+        <h1 id="pending-title">Pendiente</h1>
+        <p id="pendingMessage">
+          Tu cuenta está pendiente de aprobación. Un admin del workspace debe aprobar tu acceso.
+        </p>
+        <div class="pending-actions">
+          <a href="login.html">Volver al login</a>
+          <a href="index.html">Cater Vegas</a>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const params = new URLSearchParams(window.location.search);
+      const message = document.querySelector("#pendingMessage");
+
+      if (params.get("status") === "disabled") {
+        message.textContent = "Tu acceso está desactivado. Contacta al admin del workspace.";
+      } else if (params.get("confirm") === "1") {
+        message.textContent = "Cuenta creada. Revisa tu email, confirma la cuenta y luego inicia sesión para terminar la solicitud.";
+      }
+    </script>
+  </body>
+</html>

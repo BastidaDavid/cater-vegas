@@ -1,14 +1,31 @@
 import {
-  getCurrentProfile,
+  DEFAULT_WORKSPACE_ID,
+  getEffectiveWorkspaceRole,
+  getWorkspaceContext,
+  isPendingWorkspaceAccess,
   isSupabaseConfigured,
   requireSupabase,
   subscribeToEvents,
 } from "../lib/supabaseClient.js";
 
-const WORKSPACE_ID = "cater-vegas";
+const WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
+const PENDING_PROFILE_ROLES = [
+  "workspace_pending",
+  "organizer_pending",
+  "collaborator_pending",
+  "client_pending",
+];
 
 const sessionStatus = document.querySelector("#sessionStatus");
 const signoutButton = document.querySelector("#signoutButton");
+const workspaceSummary = document.querySelector("#workspaceSummary");
+const refreshWorkspaceButton = document.querySelector("#refreshWorkspaceButton");
+const requestsSection = document.querySelector("#requestsSection");
+const requestsStatus = document.querySelector("#requestsStatus");
+const refreshRequestsButton = document.querySelector("#refreshRequestsButton");
+const userRequestsList = document.querySelector("#userRequestsList");
+const customersList = document.querySelector("#customersList");
+
 const eventForm = document.querySelector("#eventForm");
 const eventTitle = document.querySelector("#eventTitle");
 const eventType = document.querySelector("#eventType");
@@ -48,6 +65,9 @@ const assignmentsList = document.querySelector("#assignmentsList");
 let supabase = null;
 let currentUser = null;
 let currentProfile = null;
+let currentMembership = null;
+let currentRole = null;
+let currentWorkspace = null;
 let selectedEvent = null;
 let selectedCollaborator = null;
 let eventsChannel = null;
@@ -71,6 +91,10 @@ function setAssignmentStatus(message) {
   assignmentStatusText.textContent = message;
 }
 
+function setRequestsStatus(message) {
+  requestsStatus.textContent = message;
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -81,11 +105,27 @@ function escapeHtml(value) {
 }
 
 function canManageEvents() {
-  return ["admin", "staff"].includes(currentProfile?.role);
+  return ["owner", "admin", "organizer"].includes(currentRole);
 }
 
 function canManageCollaborators() {
-  return currentProfile?.role === "admin";
+  return ["owner", "admin"].includes(currentRole);
+}
+
+function canManageRequests() {
+  return ["owner", "admin"].includes(currentRole);
+}
+
+function profileRoleForMembershipRole(role) {
+  const roleMap = {
+    owner: "admin",
+    admin: "admin",
+    organizer: "organizer",
+    collaborator: "collaborator",
+    viewer: "client",
+  };
+
+  return roleMap[role] || "client";
 }
 
 function eventPlanFromRow(row) {
@@ -96,6 +136,26 @@ function eventPlanFromRow(row) {
     services: row.services || [],
     ...(row.plan || {}),
   };
+}
+
+function renderWorkspaceSummary(stats = {}) {
+  if (!currentWorkspace) {
+    workspaceSummary.innerHTML = "<p>No se pudo leer el workspace activo.</p>";
+    return;
+  }
+
+  workspaceSummary.innerHTML = `
+    <article class="workspace-stat">
+      <strong>${escapeHtml(currentWorkspace.name)}</strong>
+      <span class="workspace-meta">
+        ${escapeHtml(currentWorkspace.slug)} · ${escapeHtml(currentWorkspace.industry || "sin industria")} · ${escapeHtml(currentWorkspace.status)}
+      </span>
+    </article>
+    <article class="workspace-stat">
+      <strong>${stats.events || 0} eventos · ${stats.collaborators || 0} colaboradores · ${stats.customers || 0} clientes</strong>
+      <span class="workspace-meta">Workspace ID: ${escapeHtml(WORKSPACE_ID)}</span>
+    </article>
+  `;
 }
 
 function renderEventOptions() {
@@ -139,13 +199,14 @@ function renderEvents(rows = []) {
         ? event.services.join(", ")
         : "Sin servicios";
       const selectedClass = selectedEvent?.id === event.id ? " is-selected" : "";
+      const customerLabel = event.customer_id ? ` · customer #${event.customer_id}` : "";
 
       return `
         <article class="event-row${selectedClass}">
           <button type="button" data-event-id="${event.id}">
             <strong>${escapeHtml(event.title || "Evento sin nombre")}</strong>
             <span class="event-meta">
-              #${event.id} · ${escapeHtml(event.event_type || "Sin tipo")} · ${escapeHtml(event.status || "draft")} · ${escapeHtml(event.budget_label || "Sin presupuesto")}
+              #${event.id}${customerLabel} · ${escapeHtml(event.event_type || "Sin tipo")} · ${escapeHtml(event.status || "draft")} · ${escapeHtml(event.budget_label || "Sin presupuesto")}
             </span>
             <span class="event-meta">${escapeHtml(services)}</span>
           </button>
@@ -258,6 +319,83 @@ function renderAssignments(rows = []) {
     .join("");
 }
 
+function renderCustomers(rows = []) {
+  if (!rows.length) {
+    customersList.innerHTML = "<p>No hay clientes registrados todavía.</p>";
+    return;
+  }
+
+  customersList.innerHTML = rows
+    .map(
+      (customer) => `
+        <article class="customer-row">
+          <strong>${escapeHtml(customer.full_name)}</strong>
+          <span class="customer-meta">#${customer.id} · ${escapeHtml(customer.email || "Sin email")} · ${escapeHtml(customer.phone || "Sin teléfono")}</span>
+          <span class="customer-meta">${escapeHtml(customer.notes || "Sin notas")}</span>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function requestButtonsFor(request) {
+  const role = request.membership?.role || request.profile?.role || "";
+  const buttons = [];
+
+  if (role.includes("client") || role === "viewer") {
+    buttons.push(`<button class="tiny-button" type="button" data-approve-user="${request.userId}" data-approve-role="viewer">Aprobar cliente</button>`);
+  }
+
+  if (role.includes("collaborator") || role === "collaborator") {
+    buttons.push(`<button class="tiny-button" type="button" data-approve-user="${request.userId}" data-approve-role="collaborator">Aprobar colaborador</button>`);
+  }
+
+  buttons.push(`<button class="tiny-button" type="button" data-approve-user="${request.userId}" data-approve-role="organizer">Aprobar organizer</button>`);
+  buttons.push(`<button class="tiny-button" type="button" data-approve-user="${request.userId}" data-approve-role="admin">Aprobar admin</button>`);
+  buttons.push(`<button class="tiny-button" type="button" data-disable-user="${request.userId}">Desactivar</button>`);
+
+  return buttons.join("");
+}
+
+function renderUserRequests(requests = []) {
+  if (!requests.length) {
+    userRequestsList.innerHTML = "<p>No hay solicitudes pendientes.</p>";
+    return;
+  }
+
+  userRequestsList.innerHTML = requests
+    .map((request) => {
+      const profile = request.profile || {};
+      const membership = request.membership || {};
+      const status = membership.status || profile.role || "pending";
+
+      return `
+        <article class="request-row">
+          <strong>${escapeHtml(profile.full_name || profile.email || request.userId)}</strong>
+          <span class="request-meta">
+            ${escapeHtml(profile.email || "Sin email")} · profile ${escapeHtml(profile.role || "sin profile")} · membership ${escapeHtml(membership.role || "sin membership")} / ${escapeHtml(status)}
+          </span>
+          <div class="request-actions">
+            ${requestButtonsFor(request)}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  userRequestsList.querySelectorAll("[data-approve-user]").forEach((button) => {
+    button.addEventListener("click", () => {
+      approveUserRequest(button.dataset.approveUser, button.dataset.approveRole);
+    });
+  });
+
+  userRequestsList.querySelectorAll("[data-disable-user]").forEach((button) => {
+    button.addEventListener("click", () => {
+      disableUserRequest(button.dataset.disableUser);
+    });
+  });
+}
+
 function fillCollaboratorForm(collaborator) {
   collaboratorId.value = collaborator.id;
   collaboratorName.value = collaborator.full_name || "";
@@ -277,14 +415,38 @@ function resetCollaboratorForm() {
   renderCollaborators(allCollaborators);
 }
 
+async function loadWorkspace() {
+  if (!supabase) return;
+
+  const [workspaceResult, eventsResult, collaboratorsResult, customersResult] = await Promise.all([
+    supabase.from("beoflow_workspaces").select("*").eq("id", WORKSPACE_ID).maybeSingle(),
+    supabase.from("cater_events").select("id", { count: "exact", head: true }).eq("workspace_id", WORKSPACE_ID),
+    supabase.from("cater_collaborators").select("id", { count: "exact", head: true }).eq("workspace_id", WORKSPACE_ID),
+    supabase.from("cater_customers").select("id", { count: "exact", head: true }).eq("workspace_id", WORKSPACE_ID),
+  ]);
+
+  if (workspaceResult.error) {
+    workspaceSummary.innerHTML = `<p>${escapeHtml(workspaceResult.error.message)}</p>`;
+    return;
+  }
+
+  currentWorkspace = workspaceResult.data;
+  renderWorkspaceSummary({
+    events: eventsResult.count,
+    collaborators: collaboratorsResult.count,
+    customers: customersResult.count,
+  });
+}
+
 async function loadEvents() {
   if (!supabase) return;
 
   const { data, error } = await supabase
     .from("cater_events")
     .select(
-      "id,title,event_type,status,budget,budget_label,menu_style,services,plan,event_date,guest_count,updated_at,created_at"
+      "id,workspace_id,customer_id,title,event_type,status,budget,budget_label,menu_style,services,plan,event_date,guest_count,updated_at,created_at"
     )
+    .eq("workspace_id", WORKSPACE_ID)
     .order("updated_at", { ascending: false })
     .limit(100);
 
@@ -322,6 +484,7 @@ async function loadAssignments() {
   const { data, error } = await supabase
     .from("cater_event_assignments")
     .select("*")
+    .eq("workspace_id", WORKSPACE_ID)
     .order("created_at", { ascending: false })
     .limit(200);
 
@@ -334,9 +497,150 @@ async function loadAssignments() {
   renderAssignments(allAssignments);
 }
 
+async function loadCustomers() {
+  if (!supabase) return;
+
+  const { data, error } = await supabase
+    .from("cater_customers")
+    .select("*")
+    .eq("workspace_id", WORKSPACE_ID)
+    .order("updated_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    customersList.innerHTML = `<p>${escapeHtml(error.message)}</p>`;
+    return;
+  }
+
+  renderCustomers(data || []);
+}
+
+async function loadUserRequests() {
+  if (!supabase || !canManageRequests()) {
+    userRequestsList.innerHTML = "<p>Solo owner/admin puede revisar solicitudes.</p>";
+    return;
+  }
+
+  setRequestsStatus("Cargando solicitudes...");
+
+  const [membershipsResult, profilesResult] = await Promise.all([
+    supabase
+      .from("beoflow_workspace_members")
+      .select("*")
+      .eq("workspace_id", WORKSPACE_ID)
+      .in("status", ["pending", "invited", "disabled"])
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("cater_profiles")
+      .select("*")
+      .eq("workspace_id", WORKSPACE_ID)
+      .in("role", PENDING_PROFILE_ROLES)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  if (membershipsResult.error) {
+    setRequestsStatus(membershipsResult.error.message);
+    return;
+  }
+
+  if (profilesResult.error) {
+    setRequestsStatus(profilesResult.error.message);
+    return;
+  }
+
+  const memberships = membershipsResult.data || [];
+  const profiles = profilesResult.data || [];
+  const userIds = [...new Set([...memberships.map((item) => item.user_id), ...profiles.map((item) => item.id)])];
+  const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
+
+  if (userIds.length) {
+    const { data: activeProfiles } = await supabase
+      .from("cater_profiles")
+      .select("*")
+      .in("id", userIds);
+
+    (activeProfiles || []).forEach((profile) => profileMap.set(profile.id, profile));
+  }
+
+  const membershipMap = new Map(memberships.map((membership) => [membership.user_id, membership]));
+  const requests = userIds.map((userId) => ({
+    userId,
+    profile: profileMap.get(userId),
+    membership: membershipMap.get(userId),
+  }));
+
+  renderUserRequests(requests);
+  setRequestsStatus(requests.length ? `${requests.length} solicitud(es).` : "Sin solicitudes pendientes.");
+}
+
 async function refreshCollaboratorModule() {
   await loadCollaborators();
   await loadAssignments();
+}
+
+async function approveUserRequest(userId, approvedRole) {
+  if (!supabase || !canManageRequests()) return;
+
+  setRequestsStatus("Aprobando usuario...");
+
+  const { error: memberError } = await supabase.from("beoflow_workspace_members").upsert(
+    {
+      workspace_id: WORKSPACE_ID,
+      user_id: userId,
+      role: approvedRole,
+      status: "active",
+    },
+    { onConflict: "workspace_id,user_id" }
+  );
+
+  if (memberError) {
+    setRequestsStatus(memberError.message);
+    return;
+  }
+
+  const { error: profileError } = await supabase.from("cater_profiles").upsert(
+    {
+      id: userId,
+      workspace_id: WORKSPACE_ID,
+      role: profileRoleForMembershipRole(approvedRole),
+    },
+    { onConflict: "id" }
+  );
+
+  if (profileError) {
+    setRequestsStatus(profileError.message);
+    return;
+  }
+
+  setRequestsStatus("Usuario aprobado.");
+  await Promise.all([loadUserRequests(), loadWorkspace()]);
+}
+
+async function disableUserRequest(userId) {
+  if (!supabase || !canManageRequests()) return;
+
+  setRequestsStatus("Desactivando usuario...");
+
+  const { error } = await supabase
+    .from("beoflow_workspace_members")
+    .upsert(
+      {
+        workspace_id: WORKSPACE_ID,
+        user_id: userId,
+        role: "viewer",
+        status: "disabled",
+      },
+      { onConflict: "workspace_id,user_id" }
+    );
+
+  if (error) {
+    setRequestsStatus(error.message);
+    return;
+  }
+
+  await supabase.from("cater_profiles").update({ role: "client_pending" }).eq("id", userId);
+  setRequestsStatus("Usuario desactivado.");
+  await loadUserRequests();
 }
 
 async function bootAdmin() {
@@ -346,36 +650,47 @@ async function bootAdmin() {
   }
 
   supabase = requireSupabase();
-  const { user, profile } = await getCurrentProfile();
+  const { user, profile, membership, workspace } = await getWorkspaceContext();
   currentUser = user;
   currentProfile = profile;
+  currentMembership = membership;
+  currentWorkspace = workspace;
+  currentRole = getEffectiveWorkspaceRole(profile, membership);
 
   if (!currentUser) {
     window.location.href = "../login.html";
     return;
   }
 
-  if (!currentProfile) {
-    setSessionStatus("Tu usuario no tiene cater_profile. Ejecuta supabase/schema.sql o crea el perfil.");
+  if (currentMembership?.status === "disabled" || isPendingWorkspaceAccess(currentProfile, currentMembership)) {
+    window.location.href = "../pending.html";
     return;
   }
 
-  if (!["admin", "staff", "client"].includes(currentProfile.role)) {
-    setSessionStatus("Rol no reconocido. Revisa public.cater_profiles.role.");
+  if (!canManageEvents()) {
+    if (currentRole === "collaborator") window.location.href = "../collaborator/";
+    else window.location.href = "../client/";
     return;
   }
 
-  setSessionStatus(`${currentUser.email} · rol ${currentProfile.role}`);
+  setSessionStatus(`${currentUser.email} · ${currentWorkspace?.name || WORKSPACE_ID} · rol ${currentRole}`);
   eventForm.hidden = !canManageEvents();
   collaboratorForm.hidden = !canManageCollaborators();
+  requestsSection.hidden = !canManageRequests();
   assignmentForm.hidden = !canManageEvents();
 
-  await Promise.all([loadEvents(), loadCollaborators()]);
+  await Promise.all([loadWorkspace(), loadEvents(), loadCollaborators(), loadCustomers(), loadUserRequests()]);
   await loadAssignments();
 
-  eventsChannel = subscribeToEvents(() => {
-    loadEvents().then(loadAssignments);
-  });
+  eventsChannel = subscribeToEvents(
+    () => {
+      loadEvents().then(loadAssignments);
+      loadWorkspace();
+    },
+    {
+      workspaceId: WORKSPACE_ID,
+    }
+  );
 }
 
 eventForm.addEventListener("submit", async (event) => {
@@ -392,6 +707,7 @@ eventForm.addEventListener("submit", async (event) => {
   };
 
   const { error } = await supabase.from("cater_events").insert({
+    workspace_id: WORKSPACE_ID,
     title: eventTitle.value.trim(),
     event_type: eventType.value,
     budget_label: budgetLabel,
@@ -409,7 +725,7 @@ eventForm.addEventListener("submit", async (event) => {
 
   eventForm.reset();
   setEventStatus("Evento creado.");
-  await loadEvents();
+  await Promise.all([loadEvents(), loadWorkspace()]);
 });
 
 collaboratorForm.addEventListener("submit", async (event) => {
@@ -434,7 +750,11 @@ collaboratorForm.addEventListener("submit", async (event) => {
   setCollaboratorStatus(collaboratorId.value ? "Actualizando colaborador..." : "Creando colaborador...");
 
   const query = collaboratorId.value
-    ? supabase.from("cater_collaborators").update(payload).eq("id", Number(collaboratorId.value))
+    ? supabase
+        .from("cater_collaborators")
+        .update(payload)
+        .eq("workspace_id", WORKSPACE_ID)
+        .eq("id", Number(collaboratorId.value))
     : supabase.from("cater_collaborators").insert(payload);
 
   const { error } = await query;
@@ -446,7 +766,7 @@ collaboratorForm.addEventListener("submit", async (event) => {
 
   setCollaboratorStatus(collaboratorId.value ? "Colaborador actualizado." : "Colaborador creado.");
   resetCollaboratorForm();
-  await refreshCollaboratorModule();
+  await Promise.all([refreshCollaboratorModule(), loadWorkspace()]);
 });
 
 assignmentForm.addEventListener("submit", async (event) => {
@@ -465,6 +785,7 @@ assignmentForm.addEventListener("submit", async (event) => {
 
   const { error } = await supabase.from("cater_event_assignments").upsert(
     {
+      workspace_id: WORKSPACE_ID,
       event_id: eventId,
       collaborator_id: collaboratorIdValue,
       assignment_role: assignmentRole.value,
@@ -489,8 +810,8 @@ adminBeoflowForm.addEventListener("submit", async (event) => {
   if (!supabase) return;
 
   const prompt = adminBeoflowPrompt.value.trim();
-  if (!selectedEvent || !prompt) {
-    beoflowResult.textContent = "Selecciona un evento y escribe una instrucción.";
+  if (!prompt) {
+    beoflowResult.textContent = "Escribe una instrucción para BEOFlow.";
     return;
   }
 
@@ -499,8 +820,8 @@ adminBeoflowForm.addEventListener("submit", async (event) => {
   const { data, error } = await supabase.functions.invoke("beoflow", {
     body: {
       message: prompt,
-      eventId: selectedEvent.id,
-      currentPlan: eventPlanFromRow(selectedEvent),
+      eventId: selectedEvent?.id || null,
+      currentPlan: selectedEvent ? eventPlanFromRow(selectedEvent) : {},
       workspaceId: WORKSPACE_ID,
     },
   });
@@ -511,7 +832,7 @@ adminBeoflowForm.addEventListener("submit", async (event) => {
   }
 
   beoflowResult.textContent = JSON.stringify(data, null, 2);
-  await Promise.all([loadEvents(), refreshCollaboratorModule()]);
+  await Promise.all([loadEvents(), loadCustomers(), refreshCollaboratorModule(), loadWorkspace()]);
 });
 
 async function updateCollaboratorStatus(id, status) {
@@ -520,6 +841,7 @@ async function updateCollaboratorStatus(id, status) {
   const { error } = await supabase
     .from("cater_collaborators")
     .update({ status })
+    .eq("workspace_id", WORKSPACE_ID)
     .eq("id", Number(id));
 
   if (error) {
@@ -531,8 +853,13 @@ async function updateCollaboratorStatus(id, status) {
   await refreshCollaboratorModule();
 }
 
+refreshWorkspaceButton.addEventListener("click", loadWorkspace);
 refreshEventsButton.addEventListener("click", () => {
   loadEvents().then(loadAssignments);
+});
+
+refreshRequestsButton.addEventListener("click", () => {
+  Promise.all([loadUserRequests(), loadCustomers()]);
 });
 
 refreshCollaboratorsButton.addEventListener("click", refreshCollaboratorModule);
@@ -553,4 +880,3 @@ window.addEventListener("beforeunload", () => {
 bootAdmin().catch((error) => {
   setSessionStatus(error.message);
 });
-

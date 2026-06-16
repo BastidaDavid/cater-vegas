@@ -105,6 +105,12 @@
         color: var(--gold-light);
       }
 
+      .auth-recover-link {
+        justify-self: start;
+        color: var(--gold-light);
+        font-size: 0.82rem;
+      }
+
       .auth-status {
         min-height: 1.25rem;
         color: var(--gold-light);
@@ -159,6 +165,7 @@
           <button class="auth-button secondary" id="magicLinkButton" type="button">
             Enviar magic link
           </button>
+          <a class="auth-recover-link" href="recover.html">Recuperar password</a>
 
           <p class="auth-status" id="authStatus" aria-live="polite"></p>
         </form>
@@ -188,6 +195,11 @@
 
       function setStatus(message) {
         authStatus.textContent = message;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("password") === "updated") {
+        setStatus("Password actualizada. Entra con tu nueva contraseña.");
       }
 
       if (!isSupabaseConfigured) {

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cater Vegas offers premium catering services for Las Vegas events, corporate catering, weddings, conventions, private events, hotels, and holiday catering.">
+  <meta name="theme-color" content="#080706">
+  <title>Cater Vegas | Las Vegas Catering Services</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Cater Vegas home">
+      <span class="brand-mark">CV</span>
+      <span>Cater Vegas</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Open navigation" data-nav-toggle>
+      <span></span>
+      <span></span>
+    </button>
+    <nav class="main-nav" data-nav>
+      <a href="#services" data-i18n="navServices">Services</a>
+      <a href="#menus" data-i18n="navMenus">Menus</a>
+      <a href="#quote" data-i18n="navQuote">Quote</a>
+      <a href="#operations" data-i18n="navOperations">Operations</a>
+    </nav>
+    <div class="header-actions">
+      <button class="language-button" type="button" data-language-toggle>ES</button>
+      <button class="icon-button" type="button" aria-label="Toggle theme" data-theme-toggle>
+        <span class="sun">☀</span>
+        <span class="moon">☾</span>
+      </button>
+      <a class="button button-small button-primary" href="#quote" data-i18n="requestQuote">Request quote</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section-dark">
+      <div class="hero-copy">
+        <h1 data-i18n="heroTitle">Catering for events in Las Vegas, easy to quote and book.</h1>
+        <p data-i18n="heroCopy">Cater Vegas helps you find the ideal catering service for your event. Explore options, review menus, and request a quote quickly and easily.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#quote" data-i18n="heroPrimary">Calculate an instant quote</a>
+        </div>
+        <dl class="hero-metrics" aria-label="Cater Vegas highlights">
+          <div>
+            <dt>21</dt>
+            <dd data-i18n="metricServices">catering services</dd>
+          </div>
+          <div>
+            <dt>24h</dt>
+            <dd data-i18n="metricResponse">lead response target</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="hero-services" aria-label="Nuestros Servicios de Catering">
+        <div class="hero-services-header">
+          <div>
+            <span data-i18n="servicesCarouselLabel">Nuestros Servicios de Catering</span>
+            <h2 data-i18n="servicesCarouselTitle">Slide through every event Cater Vegas can serve.</h2>
+          </div>
+          <div class="carousel-controls">
+            <span class="carousel-count" id="serviceCounter">1 / 21</span>
+            <button class="carousel-button" type="button" aria-label="Previous service" data-service-prev>‹</button>
+            <button class="carousel-button" type="button" aria-label="Next service" data-service-next>›</button>
+          </div>
+        </div>
+        <div class="hero-service-track" id="heroServiceTrack" tabindex="0"></div>
+        <div class="hero-services-footer">
+          <span data-i18n="carouselHint">Swipe, drag, or use the arrows</span>
+          <strong id="heroEstimate">$8,460</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="authority band" id="services">
+      <div class="section-heading">
+        <span class="section-number">01</span>
+        <h2 data-i18n="authorityTitle">Catering options for every Las Vegas event.</h2>
+      </div>
+      <div class="service-grid" id="serviceGrid"></div>
+    </section>
+
+    <section class="menus" id="menus">
+      <div class="section-heading compact">
+        <span class="section-number">02</span>
+        <h2 data-i18n="menusTitle">Dynamic menu browsing with production-aware items.</h2>
+      </div>
+      <div class="menu-layout">
+        <aside class="menu-filters" aria-label="Menu filters">
+          <button class="filter-button active" type="button" data-menu-filter="all" data-i18n="filterAll">All</button>
+          <button class="filter-button" type="button" data-menu-filter="breakfast" data-i18n="filterBreakfast">Breakfast</button>
+          <button class="filter-button" type="button" data-menu-filter="reception" data-i18n="filterReception">Reception</button>
+          <button class="filter-button" type="button" data-menu-filter="dinner" data-i18n="filterDinner">Dinner</button>
+          <button class="filter-button" type="button" data-menu-filter="dessert" data-i18n="filterDessert">Dessert</button>
+        </aside>
+        <div class="menu-grid" id="menuGrid"></div>
+      </div>
+    </section>
+
+    <section class="quote-section section-dark" id="quote">
+      <div class="quote-intro">
+        <span class="section-number">03</span>
+        <h2 data-i18n="quoteTitle">Instant quote calculator connected to event intake.</h2>
+        <p data-i18n="quoteCopy">Guests, event type, timing, and service model generate a live estimate, deposit amount, and inquiry priority.</p>
+      </div>
+      <form class="quote-builder glass-card" id="quoteForm">
+        <label>
+          <span data-i18n="labelGuests">Guests</span>
+          <input type="number" id="guestCount" min="10" max="2500" value="120">
+        </label>
+        <label>
+          <span data-i18n="labelEventType">Event type</span>
+          <select id="eventType">
+            <option value="corporate">Corporate Catering</option>
+            <option value="wedding">Wedding Catering</option>
+            <option value="convention">Convention Catering</option>
+            <option value="private">Private Event</option>
+            <option value="hotel">Hotel Catering</option>
+            <option value="holiday">Holiday Catering</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="labelDate">Date</span>
+          <input type="date" id="eventDate">
+        </label>
+        <label>
+          <span data-i18n="labelTime">Time</span>
+          <input type="time" id="eventTime" value="18:00">
+        </label>
+        <label>
+          <span data-i18n="labelService">Service</span>
+          <select id="serviceLevel">
+            <option value="delivery">Delivery catering</option>
+            <option value="full">Full-service catering</option>
+            <option value="vip">VIP hotel service</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="labelAddons">Add-ons</span>
+          <select id="addonPackage">
+            <option value="standard">Standard setup</option>
+            <option value="bar">Bar + dessert table</option>
+            <option value="rental">Equipment rental</option>
+          </select>
+        </label>
+        <button class="button button-primary" type="submit" data-i18n="createInquiry">Create inquiry</button>
+      </form>
+      <div class="quote-output glass-card">
+        <div>
+          <span data-i18n="estimatedTotal">Estimated total</span>
+          <strong id="quoteTotal">$8,460</strong>
+        </div>
+        <div>
+          <span data-i18n="depositDueLabel">Deposit due</span>
+          <strong id="depositDue">$2,538</strong>
+        </div>
+        <div>
+          <span data-i18n="estimatedMargin">Estimated margin</span>
+          <strong id="profitMargin">32%</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="portal-preview" id="portal">
+      <div class="section-heading">
+        <span class="section-number">04</span>
+        <h2 data-i18n="portalTitle">Customer portal, ordering, reviews, and event details.</h2>
+        <p data-i18n="portalCopy">Move from menu ideas to quote, ordering, deposits, and event updates in one branded experience.</p>
+      </div>
+      <div class="portal-grid">
+        <article class="feature-panel large">
+          <h3 data-i18n="customerPortalTitle">Customer account portal</h3>
+          <p data-i18n="customerPortalCopy">Customers can review proposals, approve menus, sign contracts, pay deposits, and track event status from one branded account.</p>
+          <div class="status-list">
+            <span data-i18n="proposalReady">Proposal ready</span>
+            <span data-i18n="contractPending">Contract pending signature</span>
+            <span data-i18n="depositSent">Deposit invoice sent</span>
+          </div>
+        </article>
+        <article class="feature-panel">
+          <h3 data-i18n="onlineOrderingTitle">Online ordering</h3>
+          <p data-i18n="onlineOrderingCopy">Repeat corporate clients can reorder approved menus with delivery windows, guest counts, and invoice terms.</p>
+        </article>
+        <article class="feature-panel">
+          <h3 data-i18n="reviewsTitle">Reviews</h3>
+          <p data-i18n="reviewsCopy">Testimonials help clients compare event styles, service quality, and catering experiences.</p>
+        </article>
+        <article class="feature-panel">
+          <h3 data-i18n="blogTitle">Blog engine</h3>
+          <p data-i18n="blogCopy">Guides for convention catering, hotel events, wedding menus, and Las Vegas holiday planning.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="operations section-dark" id="operations">
+      <div class="section-heading inverse">
+        <span class="section-number">05</span>
+        <h2 data-i18n="operationsTitle">Back-office command center for catering operations.</h2>
+        <p data-i18n="operationsCopy">Sales, proposals, contracts, payments, staffing, delivery, equipment, production, kitchen prep, and analytics in one place.</p>
+      </div>
+
+      <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+          <strong>CaterOS</strong>
+          <button class="dashboard-tab active" type="button" data-dashboard-tab="events" data-i18n="tabEvents">Events</button>
+          <button class="dashboard-tab" type="button" data-dashboard-tab="crm">CRM</button>
+          <button class="dashboard-tab" type="button" data-dashboard-tab="kitchen" data-i18n="tabKitchen">Kitchen</button>
+          <button class="dashboard-tab" type="button" data-dashboard-tab="analytics" data-i18n="tabAnalytics">Analytics</button>
+        </aside>
+
+        <div class="dashboard-content">
+          <div class="dashboard-topline">
+            <div>
+              <span data-i18n="juneOperations">June operations</span>
+              <h3 id="dashboardTitle">Event calendar</h3>
+            </div>
+            <div class="view-switcher" aria-label="Calendar views">
+              <button type="button" class="active" data-i18n="viewDay">Day</button>
+              <button type="button" data-i18n="viewWeek">Week</button>
+              <button type="button" data-i18n="viewMonth">Month</button>
+            </div>
+          </div>
+
+          <div class="dashboard-panel active" data-dashboard-panel="events">
+            <div class="metric-row">
+              <div><span data-i18n="bookedEvents">Booked events</span><strong>38</strong></div>
+              <div><span data-i18n="openProposals">Open proposals</span><strong>17</strong></div>
+              <div><span data-i18n="depositsDue">Deposits due</span><strong>$42.8k</strong></div>
+              <div><span data-i18n="routesToday">Routes today</span><strong>9</strong></div>
+            </div>
+            <div class="calendar-board" id="calendarBoard"></div>
+          </div>
+
+          <div class="dashboard-panel" data-dashboard-panel="crm">
+            <div class="pipeline" id="pipeline"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th data-i18n="lead">Lead</th><th data-i18n="event">Event</th><th data-i18n="value">Value</th><th data-i18n="status">Status</th></tr>
+                </thead>
+                <tbody id="crmRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dashboard-panel" data-dashboard-panel="kitchen">
+            <div class="production-grid">
+              <article>
+                <h4 data-i18n="productionSheets">Production sheets</h4>
+                <ul id="productionList"></ul>
+              </article>
+              <article>
+                <h4 data-i18n="ingredientForecast">Ingredient forecast</h4>
+                <ul id="forecastList"></ul>
+              </article>
+              <article>
+                <h4 data-i18n="prepSchedule">Prep schedule</h4>
+                <ul id="prepList"></ul>
+              </article>
+            </div>
+          </div>
+
+          <div class="dashboard-panel" data-dashboard-panel="analytics">
+            <div class="analytics-grid">
+              <article><span data-i18n="revenue">Revenue</span><strong>$284,900</strong><div class="bar"><i style="width: 82%"></i></div></article>
+              <article><span data-i18n="foodCost">Food cost</span><strong>28.4%</strong><div class="bar"><i style="width: 46%"></i></div></article>
+              <article><span data-i18n="laborCost">Labor cost</span><strong>19.7%</strong><div class="bar"><i style="width: 38%"></i></div></article>
+              <article><span data-i18n="leadConversion">Lead conversion</span><strong>41%</strong><div class="bar"><i style="width: 66%"></i></div></article>
+            </div>
+            <div class="trend-card">
+              <h4 data-i18n="salesTrend">Sales trend</h4>
+              <div class="sparkline" aria-label="Sales trend chart"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>Cater Vegas</strong>
+      <p data-i18n="footerCopy">Premium catering services for Las Vegas events, menus, quotes, and celebrations.</p>
+    </div>
+    <a class="button button-secondary" href="#top" data-i18n="backTop">Back to top</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -3,344 +3,371 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Panel administrativo de Cater Vegas." />
-    <title>Cater Vegas | Admin</title>
+    <meta name="description" content="Panel administrativo visual de Cater Vegas." />
+    <title>Cater Vegas | Dashboard Admin</title>
+    <script>
+      if (window.location.hash) {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+        window.addEventListener("load", () => window.scrollTo(0, 0), { once: true });
+      }
+    </script>
     <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
-    <header class="admin-header">
-      <a class="admin-logo" href="../index.html">CATER VEGAS</a>
-      <nav>
-        <a href="../index.html">Generador</a>
-        <a href="../login.html">Login</a>
-        <button id="signoutButton" type="button">Salir</button>
-      </nav>
-    </header>
+    <div class="admin-layout admin-layout-simple">
+      <aside class="admin-sidebar" aria-label="Menu de administrador">
+        <a class="admin-logo" href="../index.html" aria-label="Cater Vegas home">
+          <span>CV</span>
+          <strong>CATER VEGAS</strong>
+        </a>
 
-    <main class="admin-shell">
-      <section class="admin-hero">
-        <p class="admin-kicker">Supabase Admin</p>
-        <h1>Eventos, planes y BEOFlow.</h1>
-        <p id="sessionStatus">Verificando sesión...</p>
-      </section>
+        <nav class="sidebar-nav">
+          <button class="sidebar-link is-active" type="button" data-scroll-target="#overview"><span>HM</span>Dashboard</button>
+          <button class="sidebar-link" type="button" data-scroll-target="#events"><span>Cal</span>Eventos</button>
+          <button class="sidebar-link" type="button" data-scroll-target="#requestsSection"><span>Req</span>Solicitudes</button>
+          <button class="sidebar-link" type="button" data-scroll-target="#providersSection"><span>Pro</span>Proveedores</button>
+          <button class="sidebar-link" type="button" data-scroll-target="#beoflow"><span>BEO</span>BEOFlow</button>
+        </nav>
 
-      <section class="admin-grid">
-        <section class="admin-card workspace-overview">
-          <div class="events-heading">
-            <div>
-              <p class="admin-kicker">Workspace</p>
-              <h2>BEOFlow Platform</h2>
-            </div>
-            <button id="refreshWorkspaceButton" type="button">Actualizar</button>
-          </div>
-          <div class="workspace-summary" id="workspaceSummary" aria-live="polite"></div>
-        </section>
-
-        <section class="admin-card requests-admin" id="requestsSection">
-          <div class="events-heading">
-            <div>
-              <p class="admin-kicker">User Requests</p>
-              <h2>Aprobaciones</h2>
-            </div>
-            <button id="refreshRequestsButton" type="button">Actualizar</button>
-          </div>
-          <p class="admin-status" id="requestsStatus" aria-live="polite"></p>
-          <div class="request-list" id="userRequestsList" aria-live="polite"></div>
-
-          <div class="assignment-panel">
-            <div>
-              <p class="admin-kicker">Customers</p>
-              <h3>Clientes del workspace</h3>
-            </div>
-            <div class="customer-list" id="customersList" aria-live="polite"></div>
-          </div>
-        </section>
-
-        <form class="admin-card event-form" id="eventForm">
+        <div class="sidebar-mini">
+          <span class="status-dot"></span>
           <div>
-            <p class="admin-kicker">Nuevo evento</p>
-            <h2>Crear plan base</h2>
+            <strong>Active</strong>
+            <small>cater-vegas</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="admin-main simple-main">
+        <header class="admin-header">
+          <div class="header-title">
+            <p class="eyebrow">Admin</p>
+            <h1>Dashboard Admin</h1>
+            <p>Eventos, proveedores y operaciones en una sola vista.</p>
           </div>
 
-          <label>
-            Nombre del evento
-            <input id="eventTitle" type="text" placeholder="Cena VIP en Las Vegas" required />
-          </label>
-
-          <label>
-            Tipo
-            <select id="eventType">
-              <option>Boda</option>
-              <option>Corporativo</option>
-              <option>VIP</option>
-            </select>
-          </label>
-
-          <label>
-            Presupuesto
-            <select id="eventBudget">
-              <option value="$2K - $5K">Esencial · $2K - $5K</option>
-              <option value="$5K - $10K" selected>Premium · $5K - $10K</option>
-              <option value="$10K - $25K">Completo · $10K - $25K</option>
-              <option value="$25K+">Luxury · $25K+</option>
-            </select>
-          </label>
-
-          <label>
-            Fecha tentativa
-            <input id="eventDate" type="date" />
-          </label>
-
-          <label>
-            Invitados
-            <input id="guestCount" type="number" min="1" placeholder="80" />
-          </label>
-
-          <button class="primary-button" type="submit">Crear evento</button>
-          <p class="admin-status" id="eventFormStatus" aria-live="polite"></p>
-        </form>
-
-        <section class="admin-card">
-          <div class="events-heading">
-            <div>
-              <p class="admin-kicker">Realtime</p>
-              <h2>Eventos</h2>
-            </div>
-            <button id="refreshEventsButton" type="button">Actualizar</button>
-          </div>
-          <div class="events-list" id="eventsList" aria-live="polite"></div>
-        </section>
-
-        <section class="admin-card providers-admin" id="providersSection">
-          <div class="events-heading">
-            <div>
-              <p class="admin-kicker">Providers</p>
-              <h2>Proveedores</h2>
-            </div>
-            <button id="refreshProvidersButton" type="button">Actualizar</button>
-          </div>
-
-          <div class="provider-layout">
-            <form class="provider-form" id="providerForm">
-              <input id="providerId" type="hidden" />
-
-              <label>
-                Nombre del proveedor
-                <input id="providerName" type="text" placeholder="Venue, rental, supplier..." required />
-              </label>
-
-              <label>
-                Tipo
-                <select id="providerType">
-                  <option value="vendor" selected>Vendor</option>
-                  <option value="venue">Venue</option>
-                  <option value="food">Food</option>
-                  <option value="beverage">Beverage</option>
-                  <option value="rental">Rental</option>
-                  <option value="staffing">Staffing</option>
-                  <option value="transportation">Transportation</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="floral">Floral</option>
-                  <option value="decor">Decor</option>
-                  <option value="service">Service</option>
-                  <option value="other">Other</option>
-                </select>
-              </label>
-
-              <label>
-                Contacto
-                <input id="providerContactName" type="text" placeholder="Nombre contacto" />
-              </label>
-
-              <label>
-                Email
-                <input id="providerEmail" type="email" placeholder="contacto@example.com" />
-              </label>
-
-              <label>
-                Telefono
-                <input id="providerPhone" type="tel" placeholder="+1 702..." />
-              </label>
-
-              <label>
-                Website
-                <input id="providerWebsite" type="url" placeholder="https://..." />
-              </label>
-
-              <label>
-                Ciudad
-                <input id="providerCity" type="text" placeholder="Las Vegas" />
-              </label>
-
-              <label>
-                Estado
-                <input id="providerState" type="text" placeholder="NV" />
-              </label>
-
-              <label>
-                Status
-                <select id="providerStatus">
-                  <option value="active" selected>Active</option>
-                  <option value="preferred">Preferred</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </label>
-
-              <label class="wide-field">
-                Notas
-                <textarea id="providerNotes" rows="3" placeholder="Servicios, precios, restricciones, contacto"></textarea>
-              </label>
-
-              <div class="form-actions">
-                <button class="primary-button" type="submit">Guardar proveedor</button>
-                <button class="secondary-button" id="resetProviderButton" type="button">Limpiar</button>
+          <div class="header-actions">
+            <div class="user-pill" aria-label="Usuario activo">
+              <span class="avatar">CV</span>
+              <div>
+                <strong id="dashboardEmail">Verificando...</strong>
+                <small id="dashboardRole">Admin</small>
               </div>
-              <p class="admin-status" id="providerFormStatus" aria-live="polite"></p>
-            </form>
-
-            <div class="provider-list" id="providersList" aria-live="polite"></div>
+            </div>
+            <button id="signoutButton" class="logout-button" type="button">Salir</button>
           </div>
+        </header>
+
+        <section class="simple-hero" id="overview">
+          <article class="command-card simple-command">
+            <div>
+              <p class="eyebrow">Cater Vegas</p>
+              <h2>Operacion clara.</h2>
+            </div>
+            <p id="sessionStatus" class="session-status">Verificando sesion...</p>
+            <div class="quick-actions" aria-label="Acciones rapidas">
+              <button type="button" data-scroll-target="#events">Eventos</button>
+              <button type="button" data-scroll-target="#providersSection">Proveedores</button>
+              <button type="button" data-scroll-target="#beoflow">BEOFlow</button>
+            </div>
+          </article>
+
+          <article class="ai-card simple-ai" aria-label="AI Admin Assistant">
+            <div class="ai-card-copy">
+              <p class="eyebrow">BEOFlow sync</p>
+              <h2>Operacion conectada</h2>
+              <p>Proveedores, eventos y activity log listos para seguimiento.</p>
+            </div>
+            <div class="ai-avatar" aria-hidden="true">
+              <div class="ai-halo"></div>
+              <div class="ai-hat"></div>
+              <div class="ai-head">
+                <span class="ai-eye"></span>
+                <span class="ai-eye"></span>
+              </div>
+              <div class="ai-body"></div>
+              <div class="ai-bowtie"></div>
+              <div class="ai-cloche"></div>
+              <div class="ai-activity"></div>
+            </div>
+          </article>
         </section>
 
-        <section class="admin-card collaborators-admin">
-          <div class="events-heading">
-            <div>
-              <p class="admin-kicker">Collaborators</p>
-              <h2>Equipo y asignaciones</h2>
+        <section class="metric-grid metric-grid-simple" aria-label="Resumen principal">
+          <article class="metric-card">
+            <span class="metric-icon">EV</span>
+            <div><strong id="statActiveEvents">0</strong><small>Eventos</small></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon">RQ</span>
+            <div><strong id="statPending">0</strong><small>Solicitudes</small></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon">PR</span>
+            <div><strong id="statProviders">0</strong><small>Proveedores</small></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon">BS</span>
+            <div><strong id="statRevenue">BEO</strong><small>Sync</small></div>
+          </article>
+        </section>
+
+        <section class="simple-dashboard-grid">
+          <article class="panel simple-panel" id="events">
+            <div class="panel-heading">
+              <div><span>EV</span><h2>Eventos</h2></div>
+              <button id="refreshEventsButton" type="button">Actualizar</button>
             </div>
-            <button id="refreshCollaboratorsButton" type="button">Actualizar</button>
-          </div>
+            <div class="event-list-mini events-list" id="eventsList" aria-live="polite"></div>
+          </article>
 
-          <div class="collaborator-layout">
-            <form class="collaborator-form" id="collaboratorForm">
-              <input id="collaboratorId" type="hidden" />
+          <section class="panel simple-panel requests-admin" id="requestsSection">
+            <div class="panel-heading">
+              <div><span>RQ</span><h2>Solicitudes</h2></div>
+              <button id="refreshRequestsButton" type="button">Actualizar</button>
+            </div>
+            <p class="admin-status" id="requestsStatus" aria-live="polite"></p>
+            <div class="request-preview-list" id="userRequestsList" aria-live="polite"></div>
+          </section>
 
-              <label>
-                Nombre
-                <input id="collaboratorName" type="text" placeholder="Juan Perez" required />
-              </label>
+          <section class="panel simple-panel beoflow-workspace-card" id="beoflow">
+            <div class="workspace-topline">
+              <div>
+                <p class="eyebrow">Workspace</p>
+                <h2>BEOFlow</h2>
+              </div>
+              <span class="state-badge">Active</span>
+            </div>
+            <div class="workspace-summary" id="workspaceSummary" aria-live="polite"></div>
+            <button id="refreshWorkspaceButton" class="primary-button" type="button">Actualizar workspace</button>
+          </section>
+        </section>
 
-              <label>
-                Email
-                <input id="collaboratorEmail" type="email" placeholder="juan@example.com" />
-              </label>
+        <details class="admin-tools-accordion" id="settings" open>
+          <summary>Herramientas avanzadas</summary>
 
-              <label>
-                Teléfono
-                <input id="collaboratorPhone" type="tel" placeholder="+1 702..." />
-              </label>
-
-              <label>
-                Rol
-                <select id="collaboratorRole">
-                  <option value="owner">Owner</option>
-                  <option value="admin">Admin</option>
-                  <option value="organizer" selected>Organizer</option>
-                  <option value="chef">Chef</option>
-                  <option value="driver">Driver</option>
-                  <option value="server">Server</option>
-                  <option value="staff">Staff</option>
-                  <option value="viewer">Viewer</option>
-                </select>
-              </label>
-
-              <label>
-                Status
-                <select id="collaboratorStatus">
-                  <option value="active" selected>Active</option>
-                  <option value="invited">Invited</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </label>
-
-              <label class="wide-field">
-                Notas
-                <textarea id="collaboratorNotes" rows="3" placeholder="Disponibilidad, función o instrucciones"></textarea>
-              </label>
-
-              <div class="form-actions">
-                <button class="primary-button" type="submit">Guardar colaborador</button>
-                <button class="secondary-button" id="resetCollaboratorButton" type="button">Limpiar</button>
+          <section class="admin-tools-grid provider-tools-grid">
+            <section class="panel event-admin" id="event-tools">
+              <div class="panel-heading">
+                <div><span>EV</span><h2>Agregar eventos</h2></div>
               </div>
 
-              <p class="admin-status" id="collaboratorFormStatus" aria-live="polite"></p>
-            </form>
+              <form class="event-form event-create-form" id="eventForm">
+                <label><span>Nombre</span><input id="eventTitle" type="text" placeholder="Cena VIP en Las Vegas" required /></label>
+                <label>
+                  <span>Tipo</span>
+                  <select id="eventType">
+                    <option value="Boda">Boda</option>
+                    <option value="Corporativo">Corporativo</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Social">Social</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Presupuesto</span>
+                  <select id="eventBudget">
+                    <option value="$2K - $5K">Esencial · $2K - $5K</option>
+                    <option value="$5K - $10K" selected>Premium · $5K - $10K</option>
+                    <option value="$10K - $25K">Completo · $10K - $25K</option>
+                    <option value="$25K+">Luxury · $25K+</option>
+                  </select>
+                </label>
+                <label><span>Fecha</span><input id="eventDate" type="date" /></label>
+                <label><span>Invitados</span><input id="guestCount" type="number" min="1" placeholder="80" /></label>
+                <div class="form-actions">
+                  <button class="primary-button" type="submit">Guardar evento</button>
+                  <p class="admin-status" id="eventFormStatus" aria-live="polite"></p>
+                </div>
+              </form>
+            </section>
 
-            <div class="collaborator-list" id="collaboratorsList" aria-live="polite"></div>
-          </div>
+            <section class="panel providers-admin" id="providersSection">
+              <div class="panel-heading">
+                <div><span>PR</span><h2>Agregar proveedores</h2></div>
+                <button id="refreshProvidersButton" type="button">Actualizar</button>
+              </div>
 
-          <div class="assignment-panel">
-            <div>
-              <p class="admin-kicker">Asignación</p>
-              <h3>Asignar colaborador a evento</h3>
-            </div>
+              <div class="provider-intake-layout">
+                <form class="provider-form" id="providerForm">
+                  <input id="providerId" type="hidden" />
 
-            <form class="assignment-form" id="assignmentForm">
-              <label>
-                Evento
-                <select id="assignmentEvent"></select>
-              </label>
+                  <label>
+                    <span>Proveedor / empresa</span>
+                    <input id="providerName" type="text" placeholder="Cater Vegas Rentals" required />
+                  </label>
 
-              <label>
-                Colaborador
-                <select id="assignmentCollaborator"></select>
-              </label>
+                  <label>
+                    <span>Categoria</span>
+                    <select id="providerType">
+                      <option value="vendor" selected>Vendor</option>
+                      <option value="venue">Venue</option>
+                      <option value="food">Food</option>
+                      <option value="beverage">Beverage</option>
+                      <option value="rental">Rental</option>
+                      <option value="staffing">Staffing</option>
+                      <option value="transportation">Transportation</option>
+                      <option value="entertainment">Entertainment</option>
+                      <option value="floral">Floral</option>
+                      <option value="decor">Decor</option>
+                      <option value="service">Service</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
 
-              <label>
-                Rol en evento
-                <select id="assignmentRole">
-                  <option value="organizer" selected>Organizer</option>
-                  <option value="chef">Chef</option>
-                  <option value="driver">Driver</option>
-                  <option value="server">Server</option>
-                  <option value="staff">Staff</option>
-                  <option value="viewer">Viewer</option>
-                  <option value="admin">Admin</option>
-                  <option value="owner">Owner</option>
-                </select>
-              </label>
+                  <label><span>Contacto</span><input id="providerContactName" type="text" placeholder="Nombre contacto" /></label>
+                  <label><span>Email</span><input id="providerEmail" type="email" placeholder="contacto@proveedor.com" /></label>
+                  <label><span>Telefono</span><input id="providerPhone" type="tel" placeholder="+1 702..." /></label>
+                  <label><span>Website</span><input id="providerWebsite" type="url" placeholder="https://..." /></label>
+                  <label><span>Ciudad</span><input id="providerCity" type="text" placeholder="Las Vegas" /></label>
+                  <label><span>Estado</span><input id="providerState" type="text" placeholder="NV" /></label>
+                  <label>
+                    <span>Status</span>
+                    <select id="providerStatus">
+                      <option value="active" selected>Active</option>
+                      <option value="preferred">Preferred</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </label>
 
-              <label>
-                Status
-                <select id="assignmentStatus">
-                  <option value="active" selected>Active</option>
-                  <option value="invited">Invited</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </label>
+                  <label class="wide-field">
+                    <span>Servicios y notas</span>
+                    <textarea id="providerNotes" rows="4" placeholder="Menu, zona, disponibilidad, precios base, licencia o seguro"></textarea>
+                  </label>
 
-              <label class="wide-field">
-                Notas
-                <input id="assignmentNotes" type="text" placeholder="Horario, punto de encuentro, responsabilidad" />
-              </label>
+                  <div class="form-actions">
+                    <button class="primary-button" type="submit">Guardar proveedor</button>
+                    <button class="secondary-button" id="resetProviderButton" type="button">Limpiar</button>
+                  </div>
+                  <p class="admin-status" id="providerFormStatus" aria-live="polite"></p>
+                </form>
 
-              <button class="primary-button" type="submit">Asignar</button>
-              <p class="admin-status" id="assignmentStatusText" aria-live="polite"></p>
-            </form>
+                <aside class="provider-info-card" aria-label="Informacion necesaria para proveedores">
+                  <p class="eyebrow">Datos necesarios</p>
+                  <div class="provider-checklist">
+                    <span>Empresa o contacto</span>
+                    <span>Categoria</span>
+                    <span>Email y telefono</span>
+                    <span>Servicio principal</span>
+                    <span>Zona de cobertura</span>
+                    <span>Disponibilidad</span>
+                    <span>Precios base</span>
+                    <span>Licencia / seguro</span>
+                  </div>
+                </aside>
+              </div>
 
-            <div class="assignment-list" id="assignmentsList" aria-live="polite"></div>
-          </div>
-        </section>
+              <div class="provider-directory">
+                <div>
+                  <p class="eyebrow">Lista</p>
+                  <h3>Proveedores guardados</h3>
+                </div>
+                <div class="provider-list" id="providersList" aria-live="polite"></div>
+              </div>
+            </section>
 
-        <section class="admin-card beoflow-admin">
-          <div>
-            <p class="admin-kicker">BEOFlow</p>
-            <h2>Actualizar plan</h2>
-          </div>
-          <p id="selectedEventLabel">Selecciona un evento para enviar instrucciones.</p>
-          <form id="adminBeoflowForm">
-            <textarea
-              id="adminBeoflowPrompt"
-              rows="5"
-              placeholder="Ej. Agrega transporte, hospedaje y staff para un evento VIP."
-            ></textarea>
-            <button class="primary-button" type="submit">Enviar a BEOFlow</button>
-          </form>
-          <pre id="beoflowResult"></pre>
-        </section>
-      </section>
-    </main>
+            <section class="panel collaborators-admin">
+              <div class="panel-heading">
+                <div><span>EQ</span><h2>Equipo interno y asignaciones</h2></div>
+                <button id="refreshCollaboratorsButton" type="button">Actualizar</button>
+              </div>
+
+              <div class="collaborator-layout">
+                <form class="collaborator-form" id="collaboratorForm">
+                  <input id="collaboratorId" type="hidden" />
+                  <label><span>Nombre</span><input id="collaboratorName" type="text" placeholder="Juan Perez" required /></label>
+                  <label><span>Email</span><input id="collaboratorEmail" type="email" placeholder="juan@example.com" /></label>
+                  <label><span>Telefono</span><input id="collaboratorPhone" type="tel" placeholder="+1 702..." /></label>
+                  <label>
+                    <span>Rol</span>
+                    <select id="collaboratorRole">
+                      <option value="owner">Owner</option>
+                      <option value="admin">Admin</option>
+                      <option value="organizer" selected>Organizer</option>
+                      <option value="chef">Chef</option>
+                      <option value="driver">Driver</option>
+                      <option value="server">Server</option>
+                      <option value="staff">Staff</option>
+                      <option value="viewer">Viewer</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Status</span>
+                    <select id="collaboratorStatus">
+                      <option value="active" selected>Active</option>
+                      <option value="invited">Invited</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </label>
+                  <label class="wide-field"><span>Notas</span><textarea id="collaboratorNotes" rows="3" placeholder="Disponibilidad, funcion o instrucciones"></textarea></label>
+                  <div class="form-actions">
+                    <button class="primary-button" type="submit">Guardar colaborador</button>
+                    <button class="secondary-button" id="resetCollaboratorButton" type="button">Limpiar</button>
+                  </div>
+                  <p class="admin-status" id="collaboratorFormStatus" aria-live="polite"></p>
+                </form>
+
+                <div class="collaborator-list" id="collaboratorsList" aria-live="polite"></div>
+              </div>
+
+              <div class="assignment-panel">
+                <div>
+                  <p class="eyebrow">Asignacion</p>
+                  <h3>Colaborador a evento</h3>
+                </div>
+
+                <form class="assignment-form" id="assignmentForm">
+                  <label><span>Evento</span><select id="assignmentEvent"></select></label>
+                  <label><span>Colaborador</span><select id="assignmentCollaborator"></select></label>
+                  <label>
+                    <span>Funcion</span>
+                    <select id="assignmentRole">
+                      <option value="organizer" selected>Organizer</option>
+                      <option value="chef">Chef</option>
+                      <option value="driver">Driver</option>
+                      <option value="server">Server</option>
+                      <option value="staff">Staff</option>
+                      <option value="viewer">Viewer</option>
+                      <option value="admin">Admin</option>
+                      <option value="owner">Owner</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Status</span>
+                    <select id="assignmentStatus">
+                      <option value="active" selected>Active</option>
+                      <option value="invited">Invited</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </label>
+                  <label class="wide-field"><span>Notas</span><input id="assignmentNotes" type="text" placeholder="Horario, punto de encuentro, responsabilidad" /></label>
+                  <button class="primary-button" type="submit">Asignar</button>
+                  <p class="admin-status" id="assignmentStatusText" aria-live="polite"></p>
+                </form>
+
+                <div class="assignment-list" id="assignmentsList" aria-live="polite"></div>
+              </div>
+            </section>
+
+            <section class="panel beoflow-admin">
+              <div class="panel-heading">
+                <div><span>BEO</span><h2>BEOFlow Command</h2></div>
+              </div>
+              <p id="selectedEventLabel">Selecciona un evento para enviar instrucciones.</p>
+              <form id="adminBeoflowForm">
+                <textarea id="adminBeoflowPrompt" rows="5" placeholder="Agrega transporte, hospedaje y staff para un evento VIP."></textarea>
+                <button class="primary-button" type="submit">Enviar a BEOFlow</button>
+              </form>
+              <pre id="beoflowResult"></pre>
+            </section>
+
+            <section class="utility-sinks" hidden aria-hidden="true">
+              <div id="customersList"></div>
+            </section>
+          </section>
+        </details>
+      </main>
+    </div>
 
     <script type="module" src="admin.js"></script>
   </body>

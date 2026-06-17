@@ -25,6 +25,12 @@ const requestsStatus = document.querySelector("#requestsStatus");
 const refreshRequestsButton = document.querySelector("#refreshRequestsButton");
 const userRequestsList = document.querySelector("#userRequestsList");
 const customersList = document.querySelector("#customersList");
+const dashboardEmail = document.querySelector("#dashboardEmail");
+const dashboardRole = document.querySelector("#dashboardRole");
+const statActiveEvents = document.querySelector("#statActiveEvents");
+const statPending = document.querySelector("#statPending");
+const statProviders = document.querySelector("#statProviders");
+const statRevenue = document.querySelector("#statRevenue");
 
 const eventForm = document.querySelector("#eventForm");
 const eventTitle = document.querySelector("#eventTitle");
@@ -128,6 +134,10 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function setOptionalText(element, value) {
+  if (element) element.textContent = value;
+}
+
 function canManageEvents() {
   return ["owner", "admin", "organizer"].includes(currentRole);
 }
@@ -167,6 +177,10 @@ function eventPlanFromRow(row) {
 }
 
 function renderWorkspaceSummary(stats = {}) {
+  setOptionalText(statActiveEvents, String(stats.events || 0));
+  setOptionalText(statProviders, String(stats.providers || 0));
+  setOptionalText(statRevenue, "Synced");
+
   if (!currentWorkspace) {
     workspaceSummary.innerHTML = "<p>No se pudo leer el workspace activo.</p>";
     return;
@@ -215,6 +229,8 @@ function renderCollaboratorOptions() {
 }
 
 function renderEvents(rows = []) {
+  setOptionalText(statActiveEvents, String(rows.length));
+
   if (!rows.length) {
     eventsList.innerHTML = "<p>No hay eventos visibles todavía.</p>";
     renderEventOptions();
@@ -258,6 +274,8 @@ function renderEvents(rows = []) {
 }
 
 function renderProviders(rows = []) {
+  setOptionalText(statProviders, String(rows.length));
+
   if (!rows.length) {
     providersList.innerHTML = "<p>No hay proveedores todavía.</p>";
     return;
@@ -445,6 +463,8 @@ function requestButtonsFor(request) {
 }
 
 function renderUserRequests(requests = []) {
+  setOptionalText(statPending, String(requests.length));
+
   if (!requests.length) {
     userRequestsList.innerHTML = "<p>No hay solicitudes pendientes.</p>";
     return;
@@ -809,6 +829,8 @@ async function bootAdmin() {
   }
 
   setSessionStatus(`${currentUser.email} · ${currentWorkspace?.name || WORKSPACE_ID} · rol ${currentRole}`);
+  setOptionalText(dashboardEmail, currentUser.email || "Usuario activo");
+  setOptionalText(dashboardRole, currentRole || "admin");
   eventForm.hidden = !canManageEvents();
   providersSection.hidden = !canManageProviders();
   providerForm.hidden = !canManageProviders();
@@ -1130,6 +1152,19 @@ async function updateCollaboratorStatus(id, status) {
 }
 
 refreshWorkspaceButton.addEventListener("click", loadWorkspace);
+
+document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetSelector = button.dataset.scrollTarget;
+    if (!targetSelector) return;
+
+    document.querySelector(targetSelector)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+});
+
 refreshEventsButton.addEventListener("click", () => {
   loadEvents().then(loadAssignments);
 });

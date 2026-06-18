@@ -3,7 +3,7 @@ import {
   isSupabaseConfigured,
   requireSupabase,
   subscribeToEvents,
-} from "./lib/supabaseClient.js";
+} from "./lib/supabaseClient.js?v=route-stable-20260618";
 
 const WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 const supabase = isSupabaseConfigured ? requireSupabase() : null;

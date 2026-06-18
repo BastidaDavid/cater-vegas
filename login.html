@@ -181,9 +181,10 @@
     <script type="module">
       import {
         isSupabaseConfigured,
+        navigateWithLoopGuard,
         requireSupabase,
         resolvePostLoginPath,
-      } from "./lib/supabaseClient.js";
+      } from "./lib/supabaseClient.js?v=route-stable-20260618";
 
       const authForm = document.querySelector("#authForm");
       const emailInput = document.querySelector("#authEmail");
@@ -215,7 +216,7 @@
           setStatus(`Sesión activa: ${data.session.user.email}`);
           try {
             const nextPath = await resolvePostLoginPath();
-            window.location.href = nextPath;
+            navigateWithLoopGuard(nextPath, "login-session");
           } catch (routeError) {
             setStatus(routeError.message);
           }
@@ -239,7 +240,7 @@
 
         try {
           const nextPath = await resolvePostLoginPath();
-          window.location.href = nextPath;
+          navigateWithLoopGuard(nextPath, "login-submit");
         } catch (routeError) {
           setStatus(routeError.message);
         }

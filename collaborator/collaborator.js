@@ -1,10 +1,12 @@
 import {
   DEFAULT_WORKSPACE_ID,
+  getEffectiveWorkspaceRole,
   getWorkspaceContext,
   isPendingWorkspaceAccess,
+  navigateWithLoopGuard,
   isSupabaseConfigured,
   requireSupabase,
-} from "../lib/supabaseClient.js";
+} from "../lib/supabaseClient.js?v=route-stable-20260618";
 
 const sessionStatus = document.querySelector("#sessionStatus");
 const assignmentsList = document.querySelector("#assignmentsList");
@@ -74,12 +76,18 @@ async function bootCollaborator() {
   const { user, profile, membership } = await getWorkspaceContext();
 
   if (!user) {
-    window.location.href = "../login.html";
+    navigateWithLoopGuard("../login.html", "collaborator-missing-user");
     return;
   }
 
-  if (membership?.status === "disabled" || isPendingWorkspaceAccess(profile, membership)) {
-    window.location.href = "../pending.html";
+  if (membership?.status === "disabled" || isPendingWorkspaceAccess(profile, membership, user)) {
+    navigateWithLoopGuard("../pending.html", "collaborator-pending");
+    return;
+  }
+
+  const role = getEffectiveWorkspaceRole(profile, membership, user);
+  if (["owner", "admin", "super_admin", "platform_admin", "organizer"].includes(role)) {
+    navigateWithLoopGuard("../admin/", "collaborator-admin-role");
     return;
   }
 

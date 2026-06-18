@@ -3,10 +3,11 @@ import {
   getEffectiveWorkspaceRole,
   getWorkspaceContext,
   isPendingWorkspaceAccess,
+  navigateWithLoopGuard,
   isSupabaseConfigured,
   requireSupabase,
   subscribeToEvents,
-} from "../lib/supabaseClient.js";
+} from "../lib/supabaseClient.js?v=route-stable-20260618";
 
 const WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 const PENDING_PROFILE_ROLES = [
@@ -1242,15 +1243,15 @@ async function ensureAdminReady(setStatus) {
     currentProfile = profile;
     currentMembership = membership;
     currentWorkspace = workspace;
-    currentRole = getEffectiveWorkspaceRole(profile, membership);
+    currentRole = getEffectiveWorkspaceRole(profile, membership, user);
 
     if (!currentUser) {
-      window.location.href = "../login.html";
+      navigateWithLoopGuard("../login.html", "admin-missing-user");
       return false;
     }
 
-    if (currentMembership?.status === "disabled" || isPendingWorkspaceAccess(currentProfile, currentMembership)) {
-      window.location.href = "../pending.html";
+    if (currentMembership?.status === "disabled" || isPendingWorkspaceAccess(currentProfile, currentMembership, currentUser)) {
+      navigateWithLoopGuard("../pending.html", "admin-pending");
       return false;
     }
 
@@ -1275,15 +1276,15 @@ async function bootAdmin() {
   currentProfile = profile;
   currentMembership = membership;
   currentWorkspace = workspace;
-  currentRole = getEffectiveWorkspaceRole(profile, membership);
+  currentRole = getEffectiveWorkspaceRole(profile, membership, user);
 
   if (!currentUser) {
-    window.location.href = "../login.html";
+    navigateWithLoopGuard("../login.html", "admin-boot-missing-user");
     return;
   }
 
-  if (currentMembership?.status === "disabled" || isPendingWorkspaceAccess(currentProfile, currentMembership)) {
-    window.location.href = "../pending.html";
+  if (currentMembership?.status === "disabled" || isPendingWorkspaceAccess(currentProfile, currentMembership, currentUser)) {
+    navigateWithLoopGuard("../pending.html", "admin-boot-pending");
     return;
   }
 

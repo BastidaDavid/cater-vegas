@@ -3,9 +3,10 @@ import {
   getEffectiveWorkspaceRole,
   getWorkspaceContext,
   isPendingWorkspaceAccess,
+  navigateWithLoopGuard,
   isSupabaseConfigured,
   requireSupabase,
-} from "../lib/supabaseClient.js";
+} from "../lib/supabaseClient.js?v=route-stable-20260618";
 
 const sessionStatus = document.querySelector("#sessionStatus");
 const eventsList = document.querySelector("#eventsList");
@@ -62,18 +63,18 @@ async function bootClient() {
   const { user, profile, membership } = await getWorkspaceContext();
 
   if (!user) {
-    window.location.href = "../login.html";
+    navigateWithLoopGuard("../login.html", "client-missing-user");
     return;
   }
 
-  if (membership?.status === "disabled" || isPendingWorkspaceAccess(profile, membership)) {
-    window.location.href = "../pending.html";
+  if (membership?.status === "disabled" || isPendingWorkspaceAccess(profile, membership, user)) {
+    navigateWithLoopGuard("../pending.html", "client-pending");
     return;
   }
 
-  const role = getEffectiveWorkspaceRole(profile, membership);
+  const role = getEffectiveWorkspaceRole(profile, membership, user);
   if (["owner", "admin", "super_admin", "platform_admin", "organizer"].includes(role)) {
-    window.location.href = "../admin/";
+    navigateWithLoopGuard("../admin/", "client-admin-role");
     return;
   }
 

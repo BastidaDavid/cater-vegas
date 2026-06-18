@@ -243,6 +243,7 @@ p {
 }
 
 .ghost-link,
+.home-button,
 .logout-button,
 .panel-heading button,
 .quick-actions button,
@@ -266,6 +267,7 @@ p {
 }
 
 .ghost-link:hover,
+.home-button:hover,
 .logout-button:hover,
 .panel-heading button:hover,
 .quick-actions button:hover,
@@ -275,6 +277,16 @@ p {
   border-color: rgba(214, 178, 124, 0.58);
   background: rgba(214, 178, 124, 0.11);
   transform: translateY(-1px);
+}
+
+.home-button {
+  min-height: 3.1rem;
+  gap: 0.45rem;
+  background: rgba(214, 178, 124, 0.1);
+}
+
+.home-button span {
+  font-size: 1rem;
 }
 
 .user-pill {

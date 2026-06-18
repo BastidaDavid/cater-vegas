@@ -62,6 +62,23 @@ button {
   font-size: 0.82rem;
 }
 
+.portal-home {
+  display: inline-flex;
+  min-height: 2.55rem;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(214, 178, 124, 0.1);
+  color: var(--gold-light);
+  font-weight: 800;
+  padding: 0 0.9rem;
+}
+
+.portal-home span {
+  font-size: 1rem;
+}
+
 .portal-header button {
   border: 1px solid var(--line);
   border-radius: 999px;

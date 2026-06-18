@@ -5,11 +5,11 @@ begin;
 
 update public.cater_profiles
 set role = 'admin',
-    workspace_id = 'catering_events'
+    workspace_id = 'cater-vegas'
 where lower(email) = 'exmarquesado@gmail.com';
 
 insert into public.beoflow_workspace_members (workspace_id, user_id, role, status)
-select 'catering_events', id, 'owner', 'active'
+select 'cater-vegas', id, 'owner', 'active'
 from public.cater_profiles
 where lower(email) = 'exmarquesado@gmail.com'
 on conflict (workspace_id, user_id)

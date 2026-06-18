@@ -7,7 +7,7 @@ import {
   isSupabaseConfigured,
   requireSupabase,
   subscribeToEvents,
-} from "../lib/supabaseClient.js?v=route-stable-20260618";
+} from "../lib/supabaseClient.js?v=save-debug-20260618";
 
 const WORKSPACE_ID = DEFAULT_WORKSPACE_ID;
 const PENDING_PROFILE_ROLES = [
@@ -18,6 +18,9 @@ const PENDING_PROFILE_ROLES = [
 ];
 const WORKSPACE_MANAGER_ROLES = new Set(["owner", "admin", "super_admin", "platform_admin"]);
 const EVENT_MANAGER_ROLES = new Set(["owner", "admin", "super_admin", "platform_admin", "organizer"]);
+const ADMIN_WRITE_ROLES = new Set(["owner", "admin", "super_admin", "platform_admin"]);
+const EVENT_INSERT_TABLE = "cater_events";
+const PROVIDER_INSERT_TABLE = "cater_providers";
 const PROVIDER_NOTE_LABELS = {
   services: "Servicios y notas",
   coverage: "Zona de cobertura",
@@ -135,20 +138,53 @@ function setCollaboratorStatus(message) {
   collaboratorFormStatus.textContent = message;
 }
 
-function eventSaveErrorMessage(error) {
-  const message = error?.message || "";
-  if (message.toLowerCase().includes("row-level security")) {
-    return "No se pudo guardar el evento. Revisa la conexion o las politicas de Supabase.";
+function isPermissionError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  const code = String(error?.code || "");
+  const status = Number(error?.status || error?.statusCode || 0);
+  return (
+    code === "42501" ||
+    status === 401 ||
+    status === 403 ||
+    message.includes("row-level security") ||
+    message.includes("permission denied") ||
+    message.includes("not authorized")
+  );
+}
+
+function isWorkspaceError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  const details = String(error?.details || "").toLowerCase();
+  const code = String(error?.code || "");
+  return (
+    (code === "23503" && (message.includes("workspace") || details.includes("workspace"))) ||
+    details.includes("workspace_id") ||
+    details.includes("beoflow_workspaces")
+  );
+}
+
+function saveErrorMessage(error, entityLabel) {
+  if (isPermissionError(error)) {
+    return "Tu usuario no tiene permisos para guardar en este workspace.";
   }
-  return message || "No se pudo guardar el evento. Revisa la conexion o las politicas de Supabase.";
+
+  if (isMissingSchemaColumnError(error)) {
+    return "La estructura de la tabla no coincide con el formulario.";
+  }
+
+  if (isWorkspaceError(error)) {
+    return "No se encontro el workspace Cater Vegas.";
+  }
+
+  return error?.message || `No se pudo guardar el ${entityLabel}. Revisa la conexion o las politicas de Supabase.`;
+}
+
+function eventSaveErrorMessage(error) {
+  return saveErrorMessage(error, "evento");
 }
 
 function providerSaveErrorMessage(error) {
-  const message = error?.message || "";
-  if (message.toLowerCase().includes("row-level security")) {
-    return "No se pudo guardar el proveedor. Revisa la conexion o las politicas de Supabase.";
-  }
-  return message || "No se pudo guardar el proveedor. Revisa la conexion o las politicas de Supabase.";
+  return saveErrorMessage(error, "proveedor");
 }
 
 function setAssignmentStatus(message) {
@@ -200,6 +236,63 @@ function canManageRequests() {
   return Boolean(currentUser) && hasAnyRole(WORKSPACE_MANAGER_ROLES);
 }
 
+function canWriteWorkspaceData() {
+  return Boolean(currentUser) && hasAnyRole(ADMIN_WRITE_ROLES);
+}
+
+async function readActiveSession(setStatus) {
+  let data = null;
+  let sessionError = null;
+
+  try {
+    const result = await supabase.auth.getSession();
+    data = result.data;
+    sessionError = result.error;
+  } catch (error) {
+    sessionError = error;
+  }
+
+  const session = data?.session || null;
+  console.log("Supabase session:", session);
+
+  if (sessionError) {
+    console.error("Supabase session error:", sessionError);
+    setStatus("Tu sesion expiro. Inicia sesion nuevamente.");
+    return null;
+  }
+
+  if (!session) {
+    setStatus("Tu sesion expiro. Inicia sesion nuevamente.");
+    return null;
+  }
+
+  console.log("Current user:", session.user);
+  currentUser = session.user;
+  return session;
+}
+
+function logSaveContext(resourceLabel, tableName, payload, session) {
+  console.log(`Saving ${resourceLabel}...`);
+  console.log("Supabase session:", session);
+  console.log("Current user:", session?.user);
+  console.log("Current role:", currentRole);
+  console.log("Current workspace/client:", currentWorkspace || null);
+  console.log(`${resourceLabel === "event" ? "Event" : "Provider"} payload:`, payload);
+  console.log("Insert table:", tableName);
+}
+
+function logSupabaseInsertResult(result) {
+  console.log("Insert data:", result?.data || null);
+
+  if (result?.error) {
+    console.error("Insert error:", result.error);
+    console.error("Insert error message:", result.error.message);
+    console.error("Insert error code:", result.error.code);
+    console.error("Insert error details:", result.error.details);
+    console.error("Insert error hint:", result.error.hint);
+  }
+}
+
 function profileRoleForMembershipRole(role) {
   const roleMap = {
     owner: "admin",
@@ -246,18 +339,23 @@ function buildEventPayload() {
   };
 }
 
-async function insertEventPayload(basePayload) {
+async function insertEventPayload(basePayload, session) {
   const payloads = [
-    currentUser?.id ? { ...basePayload, created_by: currentUser.id } : null,
+    session?.user?.id ? { ...basePayload, created_by: session.user.id } : null,
     basePayload,
   ].filter(Boolean);
 
   for (const payload of payloads) {
-    const result = await supabase.from("cater_events").insert(payload);
+    logSaveContext("event", EVENT_INSERT_TABLE, payload, session);
+    const result = await supabase.from(EVENT_INSERT_TABLE).insert(payload).select("*").single();
+    logSupabaseInsertResult(result);
     if (!isMissingSchemaColumnError(result.error)) return result;
   }
 
-  return supabase.from("cater_events").insert(basePayload);
+  logSaveContext("event", EVENT_INSERT_TABLE, basePayload, session);
+  const fallbackResult = await supabase.from(EVENT_INSERT_TABLE).insert(basePayload).select("*").single();
+  logSupabaseInsertResult(fallbackResult);
+  return fallbackResult;
 }
 
 function formatCurrency(value) {
@@ -880,41 +978,52 @@ function isMissingSchemaColumnError(error) {
   return error?.code === "PGRST204" || String(error?.message || "").toLowerCase().includes("schema cache");
 }
 
-async function insertProviderPayload(basePayload) {
+async function insertProviderPayload(basePayload, session) {
   const detailPayload = providerDetailPayload();
   const payloads = [
-    currentUser?.id ? { ...basePayload, ...detailPayload, created_by: currentUser.id } : null,
+    session?.user?.id ? { ...basePayload, ...detailPayload, created_by: session.user.id } : null,
     { ...basePayload, ...detailPayload },
     basePayload,
   ].filter(Boolean);
 
   for (const payload of payloads) {
-    const result = await supabase.from("cater_providers").insert(payload).select("id").single();
+    logSaveContext("provider", PROVIDER_INSERT_TABLE, payload, session);
+    const result = await supabase.from(PROVIDER_INSERT_TABLE).insert(payload).select("*").single();
+    logSupabaseInsertResult(result);
     if (!isMissingSchemaColumnError(result.error)) return result;
   }
 
-  return supabase.from("cater_providers").insert(basePayload).select("id").single();
+  logSaveContext("provider", PROVIDER_INSERT_TABLE, basePayload, session);
+  const fallbackResult = await supabase.from(PROVIDER_INSERT_TABLE).insert(basePayload).select("*").single();
+  logSupabaseInsertResult(fallbackResult);
+  return fallbackResult;
 }
 
-async function updateProviderPayload(id, basePayload) {
+async function updateProviderPayload(id, basePayload, session) {
   const detailPayload = providerDetailPayload();
+  const fullPayload = { ...basePayload, ...detailPayload };
+  logSaveContext("provider", PROVIDER_INSERT_TABLE, fullPayload, session);
   const firstResult = await supabase
-    .from("cater_providers")
-    .update({ ...basePayload, ...detailPayload })
+    .from(PROVIDER_INSERT_TABLE)
+    .update(fullPayload)
     .eq("workspace_id", WORKSPACE_ID)
     .eq("id", Number(id))
-    .select("id")
+    .select("*")
     .single();
+  logSupabaseInsertResult(firstResult);
 
   if (!isMissingSchemaColumnError(firstResult.error)) return firstResult;
 
-  return supabase
-    .from("cater_providers")
+  logSaveContext("provider", PROVIDER_INSERT_TABLE, basePayload, session);
+  const fallbackResult = await supabase
+    .from(PROVIDER_INSERT_TABLE)
     .update(basePayload)
     .eq("workspace_id", WORKSPACE_ID)
     .eq("id", Number(id))
-    .select("id")
+    .select("*")
     .single();
+  logSupabaseInsertResult(fallbackResult);
+  return fallbackResult;
 }
 
 function splitProviderNotes(notes = "") {
@@ -1259,6 +1368,7 @@ async function ensureAdminReady(setStatus) {
     syncAdminPermissionsUi();
     return canManageEvents() || canManageCollaborators();
   } catch (error) {
+    console.error("Admin permission check failed:", error);
     setStatus("No se pudo verificar permisos. Revisa la conexion o las politicas de Supabase.");
     return false;
   }
@@ -1312,6 +1422,30 @@ async function bootAdmin() {
   );
 }
 
+async function syncEventToBeoflow(eventId) {
+  if (!supabase || !eventId) return { status: "skipped", reason: "No event id." };
+
+  try {
+    const { data, error } = await supabase.functions.invoke("beoflow", {
+      body: {
+        action: "sync-event",
+        eventId,
+        workspaceId: WORKSPACE_ID,
+      },
+    });
+
+    if (error) {
+      console.error("BEOFlow event sync error:", error);
+      return { status: "failed", reason: error.message };
+    }
+
+    return data?.beoflowSync || { status: "skipped", reason: "No sync response." };
+  } catch (error) {
+    console.error("BEOFlow event sync failed:", error);
+    return { status: "failed", reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
 async function syncProviderToBeoflow(providerId) {
   if (!supabase || !providerId) return { status: "skipped", reason: "No provider id." };
 
@@ -1324,9 +1458,13 @@ async function syncProviderToBeoflow(providerId) {
       },
     });
 
-    if (error) return { status: "failed", reason: error.message };
+    if (error) {
+      console.error("BEOFlow provider sync error:", error);
+      return { status: "failed", reason: error.message };
+    }
     return data?.beoflowSync || { status: "skipped", reason: "No sync response." };
   } catch (error) {
+    console.error("BEOFlow provider sync failed:", error);
     return { status: "failed", reason: error instanceof Error ? error.message : String(error) };
   }
 }
@@ -1342,7 +1480,10 @@ eventForm.addEventListener("submit", async (event) => {
     if (!ready) return;
   }
 
-  if (!canManageEvents()) {
+  const session = await readActiveSession(setEventStatus);
+  if (!session) return;
+
+  if (!canWriteWorkspaceData()) {
     setEventStatus("No tienes permisos para administrar eventos.");
     return;
   }
@@ -1355,16 +1496,21 @@ eventForm.addEventListener("submit", async (event) => {
   }
 
   setEventStatus("Guardando evento...");
-  const { error } = await insertEventPayload(payload);
+  const { data, error } = await insertEventPayload(payload, session);
 
   if (error) {
     setEventStatus(eventSaveErrorMessage(error));
     return;
   }
 
+  const syncResult = await syncEventToBeoflow(data?.id);
   eventForm.reset();
   eventBudget.value = "$5K - $10K";
-  setEventStatus("Evento guardado.");
+  setEventStatus(
+    syncResult.status === "synced"
+      ? "Evento guardado y sincronizado."
+      : `Evento guardado. Sync pendiente${syncResult.reason ? `: ${syncResult.reason}` : "."}`
+  );
   await Promise.all([loadEvents(), loadWorkspace()]);
   await loadAssignments();
 });
@@ -1381,7 +1527,10 @@ collaboratorForm.addEventListener("submit", async (event) => {
     if (!ready) return;
   }
 
-  if (!canManageCollaborators()) {
+  const session = await readActiveSession(setCollaboratorStatus);
+  if (!session) return;
+
+  if (!canWriteWorkspaceData()) {
     setCollaboratorStatus("No tienes permisos para administrar proveedores.");
     console.warn("Provider permission denied", {
       currentRole,
@@ -1418,11 +1567,11 @@ collaboratorForm.addEventListener("submit", async (event) => {
   let error = null;
 
   if (isEditing) {
-    const result = await updateProviderPayload(collaboratorId.value, payload);
+    const result = await updateProviderPayload(collaboratorId.value, payload, session);
     data = result.data;
     error = result.error;
   } else {
-    const result = await insertProviderPayload(payload);
+    const result = await insertProviderPayload(payload, session);
     data = result.data;
     error = result.error;
   }

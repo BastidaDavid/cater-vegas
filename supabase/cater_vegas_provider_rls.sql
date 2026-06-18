@@ -6,7 +6,39 @@ begin;
 
 create schema if not exists private;
 
+insert into public.beoflow_workspaces (id, name, slug, industry, status)
+values ('cater-vegas', 'Cater Vegas', 'cater-vegas', 'catering_events', 'active')
+on conflict (id)
+do update set
+  name = excluded.name,
+  slug = excluded.slug,
+  industry = excluded.industry,
+  status = 'active',
+  updated_at = now();
+
+alter table public.beoflow_workspace_members drop constraint if exists beoflow_workspace_members_role_check;
+alter table public.beoflow_workspace_members add constraint beoflow_workspace_members_role_check
+  check (role in ('owner', 'admin', 'super_admin', 'platform_admin', 'organizer', 'collaborator', 'viewer'));
+
+alter table public.cater_events
+  add column if not exists workspace_id text not null default 'cater-vegas',
+  add column if not exists title text,
+  add column if not exists event_type text,
+  add column if not exists budget_label text,
+  add column if not exists status text not null default 'draft',
+  add column if not exists event_date date,
+  add column if not exists guest_count integer,
+  add column if not exists plan jsonb not null default '{}'::jsonb,
+  add column if not exists notes text,
+  add column if not exists created_by uuid references public.cater_profiles(id) on delete set null,
+  add column if not exists created_at timestamptz not null default now(),
+  add column if not exists updated_at timestamptz not null default now();
+
+alter table public.cater_events alter column workspace_id set default 'cater-vegas';
+update public.cater_events set workspace_id = 'cater-vegas' where workspace_id is null;
+
 alter table public.cater_providers
+  add column if not exists workspace_id text not null default 'cater-vegas',
   add column if not exists provider_name text,
   add column if not exists provider_type text not null default 'vendor',
   add column if not exists contact_name text,
@@ -26,9 +58,27 @@ alter table public.cater_providers
   add column if not exists public_description text,
   add column if not exists image_url text,
   add column if not exists source text not null default 'cater_vegas_admin',
-  add column if not exists created_by uuid references auth.users(id) on delete set null,
+  add column if not exists created_by uuid references public.cater_profiles(id) on delete set null,
   add column if not exists created_at timestamptz not null default now(),
   add column if not exists updated_at timestamptz not null default now();
+
+alter table public.cater_providers alter column workspace_id set default 'cater-vegas';
+update public.cater_providers set workspace_id = 'cater-vegas' where workspace_id is null;
+
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'cater_events_workspace_id_fkey') then
+    alter table public.cater_events
+      add constraint cater_events_workspace_id_fkey
+      foreign key (workspace_id) references public.beoflow_workspaces(id);
+  end if;
+
+  if not exists (select 1 from pg_constraint where conname = 'cater_providers_workspace_id_fkey') then
+    alter table public.cater_providers
+      add constraint cater_providers_workspace_id_fkey
+      foreign key (workspace_id) references public.beoflow_workspaces(id);
+  end if;
+end $$;
 
 create index if not exists idx_cater_providers_workspace_status
   on public.cater_providers(workspace_id, status);

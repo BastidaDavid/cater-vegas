@@ -28,12 +28,16 @@ create table if not exists public.beoflow_workspace_members (
   id bigint generated always as identity primary key,
   workspace_id text not null references public.beoflow_workspaces(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  role text not null check (role in ('owner', 'admin', 'organizer', 'collaborator', 'viewer')),
+  role text not null check (role in ('owner', 'admin', 'super_admin', 'platform_admin', 'organizer', 'collaborator', 'viewer')),
   status text not null default 'pending' check (status in ('active', 'pending', 'invited', 'disabled')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (workspace_id, user_id)
 );
+
+alter table public.beoflow_workspace_members drop constraint if exists beoflow_workspace_members_role_check;
+alter table public.beoflow_workspace_members add constraint beoflow_workspace_members_role_check
+  check (role in ('owner', 'admin', 'super_admin', 'platform_admin', 'organizer', 'collaborator', 'viewer'));
 
 create table if not exists public.cater_profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -44,7 +48,10 @@ create table if not exists public.cater_profiles (
   company text,
   role text not null default 'client_pending' check (
     role in (
+      'owner',
       'admin',
+      'super_admin',
+      'platform_admin',
       'staff',
       'organizer',
       'client',
@@ -174,7 +181,10 @@ alter table public.cater_profiles drop constraint if exists cater_profiles_role_
 alter table public.cater_profiles add constraint cater_profiles_role_check
   check (
     role in (
+      'owner',
       'admin',
+      'super_admin',
+      'platform_admin',
       'staff',
       'organizer',
       'client',
@@ -469,7 +479,7 @@ as $$
     ),
     (
       select case
-        when p.role = 'admin' then 'admin'
+        when p.role in ('owner', 'admin', 'super_admin', 'platform_admin') then p.role
         when p.role in ('staff', 'organizer') then 'organizer'
         when p.role = 'collaborator' then 'collaborator'
         when p.role = 'client' then 'viewer'
@@ -490,7 +500,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.beoflow_current_workspace_role(target_workspace_id), '') in ('owner', 'admin');
+  select coalesce(public.beoflow_current_workspace_role(target_workspace_id), '') in ('owner', 'admin', 'super_admin', 'platform_admin');
 $$;
 
 create or replace function public.beoflow_is_workspace_staff(target_workspace_id text)
@@ -500,7 +510,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.beoflow_current_workspace_role(target_workspace_id), '') in ('owner', 'admin', 'organizer');
+  select coalesce(public.beoflow_current_workspace_role(target_workspace_id), '') in ('owner', 'admin', 'super_admin', 'platform_admin', 'organizer');
 $$;
 
 create or replace function public.beoflow_can_access_workspace(target_workspace_id text)

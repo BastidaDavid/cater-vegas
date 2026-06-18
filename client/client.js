@@ -1,5 +1,6 @@
 import {
   DEFAULT_WORKSPACE_ID,
+  getEffectiveWorkspaceRole,
   getWorkspaceContext,
   isPendingWorkspaceAccess,
   isSupabaseConfigured,
@@ -67,6 +68,12 @@ async function bootClient() {
 
   if (membership?.status === "disabled" || isPendingWorkspaceAccess(profile, membership)) {
     window.location.href = "../pending.html";
+    return;
+  }
+
+  const role = getEffectiveWorkspaceRole(profile, membership);
+  if (["owner", "admin", "super_admin", "platform_admin", "organizer"].includes(role)) {
+    window.location.href = "../admin/";
     return;
   }
 

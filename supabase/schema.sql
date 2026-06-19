@@ -819,7 +819,17 @@ create policy "cater_events_select_by_workspace_role"
 on public.cater_events
 for select
 to authenticated
-using (public.cater_can_access_event(id));
+using (
+  public.beoflow_is_workspace_staff(workspace_id)
+  or (
+    public.beoflow_can_access_workspace(workspace_id)
+    and (
+      client_id = (select auth.uid())
+      or created_by = (select auth.uid())
+    )
+  )
+  or (customer_id is not null and public.cater_customer_email_matches(customer_id))
+);
 
 drop policy if exists "cater_events_insert_by_workspace_role" on public.cater_events;
 create policy "cater_events_insert_by_workspace_role"
@@ -842,7 +852,17 @@ create policy "cater_events_update_by_workspace_role"
 on public.cater_events
 for update
 to authenticated
-using (public.cater_can_access_event(id))
+using (
+  public.beoflow_is_workspace_staff(workspace_id)
+  or (
+    public.beoflow_can_access_workspace(workspace_id)
+    and (
+      client_id = (select auth.uid())
+      or created_by = (select auth.uid())
+    )
+  )
+  or (customer_id is not null and public.cater_customer_email_matches(customer_id))
+)
 with check (
   public.beoflow_is_workspace_staff(workspace_id)
   or (

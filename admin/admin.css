@@ -3360,6 +3360,7 @@ textarea:focus {
 .dashboard-growing-card .state-heading {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
   padding-bottom: 0.9rem;
   border-bottom: 1px solid var(--cv-light-line);

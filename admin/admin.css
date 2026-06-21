@@ -3642,8 +3642,8 @@ textarea:focus {
 
 .metric-grid-simple .metric-card.metric-card-premium {
   min-width: 0;
-  min-height: 15.25rem;
-  height: 15.25rem;
+  min-height: 12.35rem;
+  height: 12.35rem;
   border: 0;
   border-radius: 24px;
   background: transparent;
@@ -3671,7 +3671,7 @@ textarea:focus {
   color: #151a21;
   cursor: pointer;
   overflow: hidden;
-  padding: clamp(1.1rem, 1.45vw, 1.4rem);
+  padding: clamp(0.95rem, 1.2vw, 1.15rem);
   text-align: left;
   box-shadow:
     0 1.5rem 4rem rgba(43, 34, 22, 0.11),
@@ -3700,8 +3700,8 @@ textarea:focus {
   z-index: -1;
   left: -18%;
   right: -18%;
-  bottom: -4.75rem;
-  height: 8.4rem;
+  bottom: -5.35rem;
+  height: 8rem;
   border-radius: 52% 48% 0 0 / 74% 64% 0 0;
   background:
     linear-gradient(90deg, rgba(221, 169, 78, 0.42), rgba(246, 214, 154, 0.24) 45%, rgba(255, 255, 255, 0.3)),
@@ -3727,8 +3727,8 @@ textarea:focus {
   position: relative;
   z-index: 1;
   display: grid;
-  width: clamp(3.75rem, 4.4vw, 4.35rem);
-  height: clamp(3.75rem, 4.4vw, 4.35rem);
+  width: clamp(3.25rem, 3.8vw, 3.75rem);
+  height: clamp(3.25rem, 3.8vw, 3.75rem);
   place-items: center;
   border: 1px solid rgba(213, 162, 74, 0.16);
   border-radius: 1.35rem;
@@ -3772,7 +3772,7 @@ textarea:focus {
   display: block;
   color: #17202b;
   font-family: Inter, Avenir, "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(3.9rem, 5vw, 5.35rem);
+  font-size: clamp(3.25rem, 4.15vw, 4.35rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.84;
@@ -3811,7 +3811,7 @@ textarea:focus {
   margin-top: 0.55rem;
   color: #141922;
   font-family: Inter, Avenir, "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(0.95rem, 1vw, 1.1rem);
+  font-size: clamp(0.9rem, 0.95vw, 1rem);
   font-weight: 850;
   line-height: 1.16;
 }
@@ -3823,7 +3823,7 @@ textarea:focus {
   align-items: center;
   gap: 0.42rem;
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 0.7rem;
   color: var(--cv-light-muted);
   font-size: clamp(0.82rem, 0.9vw, 0.95rem);
   font-weight: 750;
@@ -3872,8 +3872,8 @@ textarea:focus {
   }
 
   .metric-grid-simple .metric-card.metric-card-premium {
-    min-height: 14.5rem;
-    height: 14.5rem;
+    min-height: 11.85rem;
+    height: 11.85rem;
   }
 }
 
@@ -3883,11 +3883,11 @@ textarea:focus {
   }
 
   .metric-grid-simple .metric-card.metric-card-premium {
-    min-height: 13.5rem;
+    min-height: 11.65rem;
     height: auto;
   }
 
   .metric-card-premium .kpi-card-action {
-    min-height: 13.5rem;
+    min-height: 11.65rem;
   }
 }

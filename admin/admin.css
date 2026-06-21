@@ -2064,6 +2064,10 @@ body {
   display: none !important;
 }
 
+.admin-utility-hero {
+  display: none !important;
+}
+
 .dashboard-growing-card {
   display: none !important;
 }

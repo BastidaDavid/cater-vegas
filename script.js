@@ -105,6 +105,7 @@ const orbThemes = {
 };
 
 let currentStageIndex = 0;
+let resizeTimer;
 
 function getElement(id) {
   return document.getElementById(id);
@@ -216,8 +217,13 @@ function updateOrb() {
 
 function nodePosition(index, total) {
   const angle = (-90 + (360 / total) * index) * (Math.PI / 180);
-  const radiusX = total <= 4 ? 220 : 270;
-  const radiusY = total <= 4 ? 160 : 210;
+  const field = getElement("cv-orb-field");
+  const width = field?.clientWidth || 850;
+  const height = field?.clientHeight || 520;
+  const nodeGuard = Math.min(74, Math.max(48, Math.min(width, height) * 0.16));
+  const compactMultiplier = total <= 4 ? 0.8 : 1;
+  const radiusX = Math.max(110, ((width / 2) - nodeGuard) * compactMultiplier);
+  const radiusY = Math.max(92, ((height / 2) - nodeGuard) * compactMultiplier);
 
   return {
     x: Math.round(Math.cos(angle) * radiusX),
@@ -390,6 +396,11 @@ function initGalaxy() {
     setTimeout(() => {
       action.textContent = original;
     }, 1600);
+  });
+
+  window.addEventListener("resize", () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(renderStage, 120);
   });
 
   renderStage();

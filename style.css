@@ -17,6 +17,7 @@
   --cv-serif: Georgia, "Times New Roman", serif;
   --cv-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --cv-gutter: clamp(18px, 3.2vw, 48px);
+  --cv-header-height: clamp(96px, 11.4vh, 118px);
 }
 
 * {
@@ -25,6 +26,11 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+html,
+body {
+  overflow-x: hidden;
 }
 
 body {
@@ -100,11 +106,11 @@ svg {
   top: 0;
   z-index: 40;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.1fr) minmax(260px, 1fr);
-  gap: 22px;
+  grid-template-columns: minmax(220px, 1fr) minmax(250px, 1fr) minmax(250px, 1fr);
+  gap: clamp(12px, 1.6vw, 22px);
   align-items: center;
-  min-height: 118px;
-  padding: 18px var(--cv-gutter);
+  min-height: var(--cv-header-height);
+  padding: clamp(10px, 1.5vh, 18px) var(--cv-gutter);
   background: rgba(3, 3, 3, 0.74);
   border-bottom: 1px solid rgba(241, 200, 109, 0.14);
   backdrop-filter: blur(20px);
@@ -119,22 +125,22 @@ svg {
 }
 
 .cv-brand-crown {
-  width: 46px;
-  height: 24px;
+  width: clamp(34px, 2.6vw, 46px);
+  height: clamp(18px, 1.4vw, 24px);
   filter: drop-shadow(0 0 14px rgba(241, 200, 109, 0.28));
 }
 
 .cv-brand-wordmark {
   margin-top: 3px;
   font-family: var(--cv-serif);
-  font-size: clamp(1.25rem, 1.8vw, 2.2rem);
+  font-size: clamp(1.2rem, 1.65vw, 2.2rem);
   font-weight: 500;
   letter-spacing: 0.22em;
   line-height: 1;
 }
 
 .cv-brand-subtitle {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.32em;
@@ -161,7 +167,7 @@ svg {
 
 .cv-assistant-label strong {
   font-family: var(--cv-sans);
-  font-size: 1.5rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.5rem);
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -169,7 +175,7 @@ svg {
 .cv-assistant-label p {
   margin: 0;
   color: var(--cv-ivory);
-  font-size: 0.96rem;
+  font-size: clamp(0.76rem, 0.95vw, 0.96rem);
 }
 
 .cv-header-actions {
@@ -189,9 +195,9 @@ svg {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
-  min-width: 146px;
-  padding: 0 22px;
+  min-height: clamp(42px, 4.9vh, 52px);
+  min-width: clamp(118px, 9.4vw, 146px);
+  padding: 0 clamp(14px, 1.5vw, 22px);
   border: 1px solid var(--cv-line);
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -217,26 +223,33 @@ svg {
 }
 
 .cv-galaxy {
-  min-height: calc(100vh - 118px);
-  padding: clamp(22px, 3vh, 34px) var(--cv-gutter) 32px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(10px, 1.5vh, 18px);
+  height: calc(100vh - var(--cv-header-height));
+  height: calc(100dvh - var(--cv-header-height));
+  min-height: 0;
+  padding: clamp(10px, 1.7vh, 22px) var(--cv-gutter);
   overflow: hidden;
 }
 
 .cv-galaxy-shell {
   display: grid;
-  grid-template-columns: minmax(230px, 300px) minmax(460px, 1fr) minmax(300px, 380px);
-  gap: clamp(22px, 2.4vw, 38px);
-  align-items: start;
+  grid-template-columns: minmax(210px, 0.76fr) minmax(360px, 1.28fr) minmax(240px, 0.82fr);
+  gap: clamp(12px, 1.55vw, 28px);
+  align-items: stretch;
   width: min(100%, 1820px);
+  min-height: 0;
   margin: 0 auto;
 }
 
 .cv-intro-panel {
   min-width: 0;
+  align-self: center;
 }
 
 .cv-kicker {
-  margin: 0 0 18px;
+  margin: 0 0 clamp(8px, 1.2vh, 18px);
   color: var(--cv-gold);
   font-size: clamp(1.2rem, 1.7vw, 1.8rem);
   line-height: 1.15;
@@ -246,7 +259,7 @@ svg {
   margin: 0;
   color: #fffaf0;
   font-family: var(--cv-serif);
-  font-size: clamp(2.8rem, 3.7vw, 4.6rem);
+  font-size: clamp(2.25rem, min(3.35vw, 6vh), 4.6rem);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.05;
@@ -255,15 +268,15 @@ svg {
 
 .cv-intro-panel > p:not(.cv-kicker) {
   max-width: 290px;
-  margin: 22px 0 0;
+  margin: clamp(10px, 1.7vh, 22px) 0 0;
   color: var(--cv-muted);
   font-size: 1rem;
 }
 
 .cv-guide-grid {
   display: grid;
-  gap: 16px;
-  margin-top: 28px;
+  gap: clamp(8px, 1.2vh, 16px);
+  margin-top: clamp(14px, 2vh, 28px);
 }
 
 .cv-guide-card,
@@ -280,8 +293,8 @@ svg {
 
 .cv-guide-card {
   display: grid;
-  gap: 9px;
-  padding: 18px;
+  gap: 7px;
+  padding: clamp(12px, 1.3vw, 18px);
 }
 
 .cv-guide-card span,
@@ -304,7 +317,7 @@ svg {
 #cv-remaining-count {
   color: var(--cv-gold);
   font-family: var(--cv-serif);
-  font-size: 2.45rem;
+  font-size: clamp(1.8rem, 2.4vw, 2.45rem);
   font-weight: 500;
   line-height: 1;
 }
@@ -313,7 +326,7 @@ svg {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: clamp(10px, 1.5vh, 18px);
 }
 
 .cv-text-button {
@@ -329,12 +342,14 @@ svg {
   display: grid;
   justify-items: center;
   min-width: 0;
+  align-self: center;
 }
 
 .cv-orb-field {
   position: relative;
   width: min(100%, 850px);
-  min-height: 520px;
+  height: clamp(330px, calc(100dvh - var(--cv-header-height) - 190px), 560px);
+  min-height: 0;
 }
 
 .cv-orb-field::before,
@@ -367,7 +382,7 @@ svg {
   top: 50%;
   z-index: 4;
   display: grid;
-  width: clamp(260px, 28vw, 390px);
+  width: clamp(190px, min(25vw, 36vh), 390px);
   aspect-ratio: 1;
   place-items: center;
   overflow: hidden;
@@ -398,7 +413,7 @@ svg {
 
 .cv-orb-ring {
   position: absolute;
-  inset: 16px;
+  inset: clamp(10px, 1.1vw, 16px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.16);
@@ -410,7 +425,7 @@ svg {
   display: grid;
   justify-items: center;
   width: 76%;
-  margin-top: 54%;
+  margin-top: 50%;
   text-align: center;
 }
 
@@ -426,7 +441,7 @@ svg {
   margin-top: 5px;
   color: #fff;
   font-family: var(--cv-serif);
-  font-size: clamp(2rem, 2.7vw, 3rem);
+  font-size: clamp(1.45rem, min(2.35vw, 4vh), 3rem);
   font-weight: 500;
   line-height: 1;
 }
@@ -449,10 +464,10 @@ svg {
   left: 50%;
   top: 50%;
   display: grid;
-  width: clamp(102px, 8vw, 128px);
+  width: clamp(82px, min(8vw, 13vh), 128px);
   aspect-ratio: 1;
   place-items: center;
-  padding: 16px 12px;
+  padding: clamp(10px, 1.1vw, 16px) 10px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 50%;
   background:
@@ -479,23 +494,23 @@ svg {
 
 .cv-node-icon {
   display: grid;
-  width: 36px;
-  height: 36px;
+  width: clamp(24px, 2.4vw, 36px);
+  height: clamp(24px, 2.4vw, 36px);
   place-items: center;
   color: var(--cv-gold-soft);
-  font-size: 1.75rem;
+  font-size: clamp(1.22rem, 1.8vw, 1.75rem);
   line-height: 1;
 }
 
 .cv-node strong {
   color: var(--cv-gold-soft);
-  font-size: 0.92rem;
+  font-size: clamp(0.72rem, 0.9vw, 0.92rem);
   line-height: 1.18;
 }
 
 .cv-node small {
   color: var(--cv-muted);
-  font-size: 0.74rem;
+  font-size: clamp(0.62rem, 0.72vw, 0.74rem);
   line-height: 1.2;
 }
 
@@ -525,9 +540,12 @@ svg {
 
 .cv-summary {
   display: grid;
-  gap: 10px;
+  gap: clamp(6px, 0.8vh, 10px);
   min-width: 0;
-  padding: 20px;
+  align-self: center;
+  max-height: 100%;
+  padding: clamp(12px, 1.35vw, 20px);
+  overflow: hidden;
   border-color: rgba(241, 200, 109, 0.22);
 }
 
@@ -539,13 +557,13 @@ svg {
 .cv-summary-header strong {
   color: var(--cv-ivory);
   font-family: var(--cv-serif);
-  font-size: 1.55rem;
+  font-size: clamp(1.1rem, 1.5vw, 1.55rem);
   font-weight: 500;
 }
 
 .cv-summary-list {
   display: grid;
-  gap: 6px;
+  gap: clamp(3px, 0.65vh, 6px);
   margin: 0;
 }
 
@@ -557,13 +575,13 @@ svg {
 
 .cv-summary-list dt {
   color: var(--cv-muted-2);
-  font-size: 0.76rem;
+  font-size: clamp(0.66rem, 0.72vw, 0.76rem);
 }
 
 .cv-summary-list dd {
   margin: 0;
   color: var(--cv-ivory);
-  font-size: 0.88rem;
+  font-size: clamp(0.74rem, 0.82vw, 0.88rem);
   overflow-wrap: anywhere;
 }
 
@@ -577,7 +595,7 @@ svg {
   margin-top: 4px;
   color: var(--cv-gold);
   font-family: var(--cv-serif);
-  font-size: 1.95rem;
+  font-size: clamp(1.35rem, 1.9vw, 1.95rem);
   font-weight: 500;
   line-height: 1;
 }
@@ -585,14 +603,14 @@ svg {
 .cv-estimate-card p {
   margin: 6px 0 0;
   color: var(--cv-muted);
-  font-size: 0.82rem;
+  font-size: clamp(0.68rem, 0.78vw, 0.82rem);
 }
 
 .cv-summary-detail {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 42px;
+  min-height: clamp(34px, 4.3vh, 42px);
   padding: 0 16px;
   border: 1px solid rgba(241, 200, 109, 0.22);
   background: rgba(0, 0, 0, 0.26);
@@ -612,35 +630,36 @@ svg {
 
 .cv-bottom-bar {
   display: grid;
-  gap: 16px;
+  gap: clamp(8px, 1vh, 16px);
   width: min(100%, 1820px);
-  margin: 18px auto 0;
-  padding: 18px;
+  margin: 0 auto;
+  padding: clamp(10px, 1.2vw, 18px);
+  overflow: hidden;
 }
 
 .cv-timeline {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .cv-timeline button {
   position: relative;
   display: grid;
-  gap: 7px;
+  gap: 5px;
   justify-items: center;
-  min-height: 58px;
+  min-height: clamp(40px, 5.4vh, 58px);
   border: 0;
   background: transparent;
   color: var(--cv-muted-2);
-  font-size: 0.78rem;
+  font-size: clamp(0.62rem, 0.74vw, 0.78rem);
   font-weight: 800;
 }
 
 .cv-timeline button::before {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: clamp(28px, 3.9vh, 42px);
+  height: clamp(28px, 3.9vh, 42px);
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
@@ -660,34 +679,34 @@ svg {
 
 .cv-inspiration {
   display: grid;
-  grid-template-columns: minmax(180px, 260px) repeat(6, minmax(132px, 1fr));
-  gap: 12px;
+  grid-template-columns: minmax(160px, 230px) repeat(6, minmax(94px, 1fr));
+  gap: clamp(6px, 0.75vw, 12px);
   align-items: stretch;
 }
 
 .cv-inspiration-copy {
   display: grid;
   align-content: center;
-  gap: 8px;
-  padding: 14px;
+  gap: 5px;
+  padding: clamp(8px, 0.9vw, 14px);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cv-inspiration-copy span {
   color: var(--cv-muted);
-  font-size: 0.9rem;
+  font-size: clamp(0.68rem, 0.78vw, 0.9rem);
 }
 
 .cv-inspiration button {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  min-height: 92px;
-  padding: 12px;
+  min-height: clamp(46px, 7vh, 92px);
+  padding: clamp(7px, 0.8vw, 12px);
   border: 1px solid rgba(241, 200, 109, 0.2);
   border-radius: var(--cv-radius);
   color: var(--cv-ivory);
-  font-size: 0.84rem;
+  font-size: clamp(0.62rem, 0.78vw, 0.84rem);
   font-weight: 800;
   text-align: center;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
@@ -743,39 +762,56 @@ svg {
 }
 
 @media (max-width: 1280px) {
-  .cv-header {
-    grid-template-columns: minmax(180px, 1fr) minmax(220px, 1fr);
+  :root {
+    --cv-gutter: clamp(14px, 2vw, 26px);
+    --cv-header-height: clamp(78px, 12vh, 96px);
   }
 
-  .cv-assistant-label {
-    order: 3;
-    grid-column: 1 / -1;
+  .cv-header {
+    grid-template-columns: minmax(160px, 0.8fr) minmax(210px, 1fr) minmax(236px, 0.86fr);
+    gap: 12px;
   }
 
   .cv-galaxy-shell {
-    grid-template-columns: minmax(220px, 280px) minmax(430px, 1fr);
+    grid-template-columns: minmax(190px, 0.74fr) minmax(330px, 1.22fr) minmax(220px, 0.82fr);
   }
 
-  .cv-summary {
-    grid-column: 1 / -1;
+  .cv-kicker {
+    font-size: 1.12rem;
+  }
+
+  .cv-intro-panel h1 {
+    font-size: clamp(2rem, min(3.5vw, 5.8vh), 3.1rem);
+  }
+
+  .cv-intro-panel > p:not(.cv-kicker) {
+    font-size: 0.86rem;
+  }
+
+  .cv-guide-card strong {
+    font-size: 0.82rem;
   }
 
   .cv-inspiration {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(132px, 180px) repeat(6, minmax(74px, 1fr));
   }
 
-  .cv-inspiration-copy {
-    grid-column: 1 / -1;
-    border-right: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  .cv-summary-list div:nth-child(4),
+  .cv-summary-list div:nth-child(5) {
+    display: none;
   }
 }
 
 @media (max-width: 900px) {
+  :root {
+    --cv-header-height: auto;
+  }
+
   .cv-header {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    min-height: auto;
   }
 
   .cv-header-actions {
@@ -788,6 +824,12 @@ svg {
 
   .cv-galaxy-shell {
     grid-template-columns: 1fr;
+  }
+
+  .cv-galaxy {
+    height: auto;
+    min-height: calc(100vh - 92px);
+    overflow: visible;
   }
 
   .cv-intro-panel {
@@ -807,7 +849,7 @@ svg {
   }
 
   .cv-orb-field {
-    min-height: 620px;
+    height: 620px;
   }
 
   .cv-timeline {
@@ -821,6 +863,81 @@ svg {
     flex: 0 0 116px;
     scroll-snap-align: start;
   }
+
+  .cv-inspiration {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cv-inspiration-copy {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (min-width: 901px) and (max-height: 720px) {
+  :root {
+    --cv-header-height: 76px;
+    --cv-gutter: clamp(12px, 1.6vw, 24px);
+  }
+
+  .cv-brand-subtitle,
+  .cv-assistant-label p,
+  .cv-guide-grid .cv-guide-card:first-child strong,
+  .cv-estimate-card p {
+    display: none;
+  }
+
+  .cv-inspiration-copy span {
+    display: none;
+  }
+
+  .cv-header {
+    min-height: var(--cv-header-height);
+    padding-block: 8px;
+  }
+
+  .cv-button {
+    min-height: 38px;
+    min-width: 112px;
+    font-size: 0.78rem;
+  }
+
+  .cv-galaxy {
+    gap: 8px;
+    padding-block: 8px;
+  }
+
+  .cv-guide-card {
+    padding: 10px;
+  }
+
+  .cv-stage-actions {
+    margin-top: 8px;
+  }
+
+  .cv-orb-field {
+    height: clamp(292px, calc(100dvh - var(--cv-header-height) - 166px), 420px);
+  }
+
+  .cv-summary-list div:nth-child(4),
+  .cv-summary-list div:nth-child(5) {
+    display: none;
+  }
+
+  .cv-bottom-bar {
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .cv-inspiration-copy {
+    padding: 6px 8px;
+  }
+
+  .cv-inspiration button {
+    min-height: 52px;
+  }
+}
 }
 
 @media (max-width: 640px) {

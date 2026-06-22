@@ -962,7 +962,7 @@ svg {
 
 .cv-bottom-bar {
   display: grid;
-  gap: clamp(7px, 0.8vh, 12px);
+  gap: 0;
   width: min(100%, 1820px);
   margin: 0 auto;
   padding: 0;
@@ -985,9 +985,7 @@ svg {
 }
 
 .cv-progress-panel {
-  display: grid;
-  gap: clamp(10px, 1.2vh, 16px);
-  padding: clamp(14px, 1.35vw, 22px) clamp(14px, 1.55vw, 26px);
+  display: none;
 }
 
 .cv-progress-meter {

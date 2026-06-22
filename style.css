@@ -241,13 +241,13 @@ svg {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: start;
   gap: clamp(10px, 1.5vh, 18px);
-  height: calc(100vh - var(--cv-header-height));
-  height: calc(100dvh - var(--cv-header-height));
-  min-height: 0;
+  min-height: calc(100vh - var(--cv-header-height));
+  min-height: calc(100dvh - var(--cv-header-height));
   padding: clamp(10px, 1.7vh, 22px) var(--cv-gutter);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .cv-galaxy::before,
@@ -1577,6 +1577,34 @@ svg {
 
   .cv-inspiration-arrow-next {
     right: 8px;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 920px) {
+  .cv-galaxy {
+    gap: 10px;
+    padding-block: 10px;
+  }
+
+  .cv-orb-field {
+    height: clamp(340px, calc(100dvh - var(--cv-header-height) - 360px), 520px);
+  }
+
+  .cv-progress-panel {
+    gap: 8px;
+    padding: 10px 16px;
+  }
+
+  .cv-timeline button {
+    min-height: 42px;
+  }
+
+  .cv-inspiration {
+    padding: 8px;
+  }
+
+  .cv-inspiration-card {
+    min-height: 54px;
   }
 }
 

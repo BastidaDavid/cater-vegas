@@ -280,9 +280,49 @@ function nodePosition(index, total, options = {}) {
     graduation: { x: -0.15, y: 0.4 },
     anniversary: { x: 0.15, y: 0.4 }
   };
+  const secondaryPositionMaps = {
+    1: [
+      { x: 0, y: 0.36 }
+    ],
+    2: [
+      { x: -0.18, y: 0.35 },
+      { x: 0.18, y: 0.35 }
+    ],
+    4: [
+      { x: 0, y: -0.35 },
+      { x: 0.32, y: 0.02 },
+      { x: 0, y: 0.35 },
+      { x: -0.32, y: 0.02 }
+    ],
+    5: [
+      { x: 0, y: -0.36 },
+      { x: 0.32, y: -0.12 },
+      { x: 0.2, y: 0.32 },
+      { x: -0.2, y: 0.32 },
+      { x: -0.32, y: -0.12 }
+    ],
+    8: [
+      { x: 0, y: -0.38 },
+      { x: 0.28, y: -0.31 },
+      { x: 0.41, y: -0.06 },
+      { x: 0.38, y: 0.2 },
+      { x: 0.26, y: 0.36 },
+      { x: -0.26, y: 0.36 },
+      { x: -0.38, y: 0.2 },
+      { x: -0.41, y: -0.06 }
+    ]
+  };
 
   if (options.stageId === "event" && eventPositionMap[options.optionId]) {
     const position = eventPositionMap[options.optionId];
+    return {
+      x: Math.round(position.x * width),
+      y: Math.round(position.y * height)
+    };
+  }
+
+  if (options.stageId !== "event" && secondaryPositionMaps[total]?.[index]) {
+    const position = secondaryPositionMaps[total][index];
     return {
       x: Math.round(position.x * width),
       y: Math.round(position.y * height)

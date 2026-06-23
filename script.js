@@ -68,7 +68,7 @@ const stages = [
   {
     id: "services",
     question: "¿Qué servicios te gustaría incluir?",
-    helperText: "Puedes elegir varios. BEOFlow reducirá la propuesta a una experiencia clara.",
+    helperText: "Puedes elegir varios. La propuesta se reducirá a una experiencia clara.",
     remainingCount: "32",
     multi: true,
     options: [
@@ -252,7 +252,7 @@ function updateOrb() {
 
   orb.dataset.orbTheme = theme;
   orb.style.setProperty("--cv-orb-scene", orbThemes[theme] || orbThemes.default);
-  getElement("cv-orb-label").textContent = stage.id === "proposal" ? "Propuesta Cater Vegas" : "BEOFlow";
+  getElement("cv-orb-label").textContent = stage.id === "proposal" ? "Propuesta Cater Vegas" : "";
   const titleElement = getElement("cv-orb-title");
   const nextTitle = stage.id === "proposal" ? "Lista para reservar" : title;
   titleElement.textContent = nextTitle;
@@ -367,7 +367,7 @@ function visibleOptions(stage) {
   return shouldShowPlanningHub(stage) ? planningCategoryOptions : stage.options;
 }
 
-function showThinkingStatus(message = "BEOFlow ajustando opciones...") {
+function showThinkingStatus(message = "Ajustando opciones...") {
   const status = getElement("cv-thinking-status");
   status.textContent = message;
   status.setAttribute("aria-hidden", "false");
@@ -570,7 +570,7 @@ function goBack() {
 function selectOption(stageId, option) {
   if (option.disabled) return;
 
-  showThinkingStatus(option.kind === "planning-hub" ? "Calculando combinaciones ideales..." : "BEOFlow ajustando opciones...");
+  showThinkingStatus(option.kind === "planning-hub" ? "Calculando combinaciones ideales..." : "Ajustando opciones...");
 
   if (option.kind === "planning-hub") {
     showingPlanningHub = false;
@@ -681,7 +681,7 @@ function initGalaxy() {
     button.addEventListener("click", () => {
       eventState.eventType = button.dataset.inspiration;
       showingPlanningHub = true;
-      showThinkingStatus("BEOFlow ajustando opciones...");
+      showThinkingStatus("Ajustando opciones...");
       goToStage("guests");
     });
   });

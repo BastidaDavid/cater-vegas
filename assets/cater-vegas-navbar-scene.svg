@@ -1,63 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-labelledby="title">
-  <title id="title">Cater Vegas night mountain logo</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" role="img" aria-labelledby="title">
+  <title id="title">Bright night mountain sky for Cater Vegas navbar</title>
   <defs>
-    <radialGradient id="skyGlow" cx="62%" cy="18%" r="72%">
-      <stop offset="0" stop-color="#3b6591"/>
-      <stop offset="0.5" stop-color="#0d2741"/>
-      <stop offset="1" stop-color="#06111f"/>
-    </radialGradient>
-    <linearGradient id="fade" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0" stop-color="#0b2036"/>
-      <stop offset="0.62" stop-color="#081728"/>
-      <stop offset="1" stop-color="#02060d"/>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#073f73"/>
+      <stop offset="0.38" stop-color="#2e85c3"/>
+      <stop offset="0.7" stop-color="#b8d7ee"/>
+      <stop offset="1" stop-color="#102940"/>
     </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.2" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <radialGradient id="milky" cx="66%" cy="25%" r="38%">
+      <stop offset="0" stop-color="#fff7ff" stop-opacity="0.92"/>
+      <stop offset="0.24" stop-color="#b9d9ff" stop-opacity="0.72"/>
+      <stop offset="0.58" stop-color="#7eb4e9" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#7eb4e9" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sunset" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#f8c886" stop-opacity="0.05"/>
+      <stop offset="0.52" stop-color="#ffe0a9" stop-opacity="0.48"/>
+      <stop offset="1" stop-color="#f59f5e" stop-opacity="0.36"/>
+    </linearGradient>
+    <linearGradient id="lake" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#194c79" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#06131f" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.9"/>
     </filter>
   </defs>
-  <rect width="900" height="220" fill="url(#skyGlow)"/>
-  <g opacity="1" fill="#f3f7ff">
-    <circle cx="46" cy="18" r="1.2"/>
-    <circle cx="88" cy="44" r="0.9"/>
-    <circle cx="136" cy="26" r="1.1"/>
-    <circle cx="196" cy="36" r="0.8"/>
-    <circle cx="262" cy="16" r="1"/>
-    <circle cx="318" cy="54" r="1.1"/>
-    <circle cx="366" cy="28" r="0.75"/>
-    <circle cx="422" cy="46" r="1.2"/>
-    <circle cx="486" cy="20" r="0.9"/>
-    <circle cx="548" cy="58" r="1"/>
-    <circle cx="604" cy="30" r="1.25"/>
-    <circle cx="672" cy="18" r="0.9"/>
-    <circle cx="732" cy="48" r="1.15"/>
-    <circle cx="808" cy="26" r="0.85"/>
-    <circle cx="860" cy="56" r="1"/>
-    <circle cx="514" cy="82" r="0.7"/>
-    <circle cx="568" cy="96" r="0.8"/>
-    <circle cx="626" cy="84" r="0.7"/>
-    <circle cx="700" cy="92" r="0.8"/>
-    <circle cx="780" cy="86" r="0.7"/>
+
+  <rect width="1600" height="420" fill="url(#sky)"/>
+  <rect y="168" width="1600" height="116" fill="url(#sunset)"/>
+  <ellipse cx="1060" cy="84" rx="360" ry="185" fill="url(#milky)" transform="rotate(68 1060 84)"/>
+
+  <g fill="#ffffff" opacity="0.92">
+    <circle cx="34" cy="22" r="1.5"/><circle cx="82" cy="48" r="1.1"/><circle cx="132" cy="24" r="1.4"/>
+    <circle cx="208" cy="58" r="1"/><circle cx="276" cy="26" r="1.3"/><circle cx="342" cy="68" r="1.1"/>
+    <circle cx="426" cy="28" r="1.5"/><circle cx="508" cy="62" r="1"/><circle cx="572" cy="22" r="1.2"/>
+    <circle cx="646" cy="84" r="1.1"/><circle cx="732" cy="36" r="1.5"/><circle cx="814" cy="72" r="1"/>
+    <circle cx="902" cy="28" r="1.2"/><circle cx="972" cy="58" r="1.4"/><circle cx="1048" cy="18" r="1.1"/>
+    <circle cx="1136" cy="66" r="1.7"/><circle cx="1218" cy="34" r="1.1"/><circle cx="1300" cy="78" r="1.4"/>
+    <circle cx="1382" cy="28" r="1.1"/><circle cx="1460" cy="54" r="1.5"/><circle cx="1542" cy="24" r="1.2"/>
+    <circle cx="116" cy="112" r="1"/><circle cx="248" cy="126" r="1.2"/><circle cx="392" cy="104" r="1.1"/>
+    <circle cx="536" cy="132" r="1"/><circle cx="684" cy="114" r="1.4"/><circle cx="842" cy="128" r="1"/>
+    <circle cx="998" cy="108" r="1.2"/><circle cx="1164" cy="126" r="1.4"/><circle cx="1324" cy="112" r="1.1"/>
+    <circle cx="1502" cy="130" r="1.3"/>
   </g>
-  <g opacity="0.54" fill="#dbe7ff" filter="url(#softGlow)">
-    <circle cx="642" cy="35" r="1.1"/>
-    <circle cx="654" cy="42" r="0.9"/>
-    <circle cx="668" cy="32" r="1"/>
-    <circle cx="682" cy="50" r="0.8"/>
-    <circle cx="694" cy="40" r="1.1"/>
-    <circle cx="710" cy="58" r="0.9"/>
-    <circle cx="724" cy="48" r="0.8"/>
-    <circle cx="738" cy="66" r="1"/>
-    <circle cx="752" cy="54" r="0.7"/>
-    <circle cx="766" cy="72" r="0.9"/>
+
+  <g stroke="#eef7ff" stroke-width="1.2" opacity="0.56">
+    <path d="M454 100c62 10 118 22 176 42"/>
   </g>
-  <path d="M0 132 65 100l70 39 74-52 76 54 72-46 72 48 78-58 74 54 77-42 80 41 78-30 84 34v78H0z" fill="#07111d"/>
-  <path d="M0 148 72 132l74 20 84-26 88 28 82-22 98 25 92-29 108 28 88-22 114 27v59H0z" fill="#091522" opacity="0.94"/>
-  <path d="M0 170h900v50H0z" fill="#030812" opacity="0.68"/>
-  <path d="M126 170c96 26 188 33 276 21 104-14 209-18 320 7 66 15 124 18 178 9v13H0v-36c42-21 84-26 126-14z" fill="#14243a" opacity="0.52"/>
-  <text x="450" y="76" text-anchor="middle" fill="#f5f1ea" font-family="Avenir, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="12">CATER VEGAS</text>
-  <rect width="900" height="220" fill="url(#fade)" opacity="0.04"/>
+
+  <path d="M0 235 108 180l92 35 112-72 90 84 112-88 95 92 94-60 108 66 128-98 118 96 112-52 116 48 118-70 98 62 98-34v231H0z" fill="#17314b"/>
+  <path d="M210 215 312 143l62 58-54-18-42 38-32-22z" fill="#f2e8de" opacity="0.96"/>
+  <path d="M512 205 609 139l66 92-63-28-48 43-35-23z" fill="#e9f0f7" opacity="0.92"/>
+  <path d="M918 216 1057 139l72 96-78-34-62 47-42-25z" fill="#f0f4fb" opacity="0.95"/>
+  <path d="M1168 219 1286 183l74 48-78-18-54 29z" fill="#dfeaf4" opacity="0.86"/>
+  <path d="M0 266 160 228l144 44 178-38 154 44 176-34 180 44 164-37 172 43 148-30 124 26v130H0z" fill="#183f5f"/>
+  <path d="M0 285c170 26 326 32 494 12 172-21 330-18 492 14 190 37 398 34 614-5v114H0z" fill="#0e291f" opacity="0.82"/>
+  <rect y="310" width="1600" height="110" fill="url(#lake)"/>
+  <path d="M0 316c180 28 332 36 492 18 185-22 329-16 500 18 190 38 394 32 608-14v82H0z" fill="#133d66" opacity="0.42" transform="translate(0 18) scale(1 -0.68) translate(0 -680)"/>
+  <path d="M0 346c260 18 444 16 690 8 316-11 584 12 910-2v68H0z" fill="#06131d" opacity="0.62"/>
+  <rect width="1600" height="420" fill="#081018" opacity="0.06"/>
 </svg>

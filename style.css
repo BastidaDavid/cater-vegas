@@ -129,12 +129,20 @@ svg {
 }
 
 .cv-brand {
-  display: grid;
+  display: block;
   width: fit-content;
   justify-self: start;
-  justify-items: center;
   color: var(--cv-gold);
-  text-align: center;
+}
+
+.cv-brand-image {
+  display: block;
+  width: clamp(190px, 18vw, 285px);
+  height: clamp(52px, 5.6vh, 72px);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 4px;
+  filter: drop-shadow(0 0 18px rgba(241, 200, 109, 0.18));
 }
 
 .cv-brand-crown {

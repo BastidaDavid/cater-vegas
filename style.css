@@ -255,7 +255,7 @@ svg {
 .cv-galaxy::before,
 .cv-galaxy::after {
   position: absolute;
-  inset: 0;
+  inset: calc(-1 * var(--cv-header-height)) 0 0;
   pointer-events: none;
   content: "";
 }

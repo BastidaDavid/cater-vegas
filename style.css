@@ -42,8 +42,9 @@ body {
   background:
     radial-gradient(circle at calc(50% + var(--cv-parallax-x)) calc(34% + var(--cv-parallax-y)), rgba(244, 199, 106, 0.2), transparent 29%),
     radial-gradient(ellipse at 12% 54%, rgba(179, 119, 42, 0.18), transparent 30%),
-    radial-gradient(ellipse at 84% 22%, rgba(255, 223, 154, 0.11), transparent 24%),
-    linear-gradient(115deg, rgba(15, 9, 6, 0.92), rgba(3, 3, 3, 0.98) 42%, #010101 100%);
+    radial-gradient(ellipse at 84% 22%, rgba(255, 223, 154, 0.12), transparent 24%),
+    linear-gradient(115deg, rgba(7, 13, 23, 0.28), rgba(3, 8, 16, 0.38) 48%, rgba(0, 0, 0, 0.42) 100%),
+    url("assets/cater-vegas-navbar-photo.png") center top / cover fixed no-repeat;
   color: var(--cv-ivory);
   font-family: var(--cv-sans);
   line-height: 1.5;
@@ -61,9 +62,9 @@ body::before {
   z-index: -2;
   background:
     radial-gradient(ellipse at calc(50% + var(--cv-parallax-x)) calc(44% + var(--cv-parallax-y)), rgba(241, 200, 109, 0.12), transparent 42%),
-    radial-gradient(ellipse at 34% 68%, rgba(255, 255, 255, 0.04), transparent 32%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.9));
-  filter: blur(1px);
+    radial-gradient(ellipse at 34% 68%, rgba(255, 255, 255, 0.05), transparent 32%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(5, 14, 26, 0.18));
+  filter: blur(0.5px);
 }
 
 body::after {

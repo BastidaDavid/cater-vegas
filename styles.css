@@ -517,9 +517,9 @@ svg {
 .category-item::before {
   z-index: -2;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.92)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.7)),
     var(--category-image, url("assets/cater-vegas-hero.png"));
-  background-position: center;
+  background-position: var(--category-position, center);
   background-size: cover;
   filter: saturate(0.82);
 }
@@ -527,8 +527,8 @@ svg {
 .category-item::after {
   z-index: -1;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.94) 78%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.34));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.78) 82%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.22));
 }
 
 .category-item:not(:first-child) {
@@ -545,19 +545,34 @@ svg {
   clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
 }
 
-.category-item:nth-child(1),
-.category-item:nth-child(2),
+.category-item:nth-child(1) {
+  --category-image: url("assets/tables.jpeg");
+  --category-position: center;
+}
+
+.category-item:nth-child(2) {
+  --category-image: url("assets/chairs.jpeg");
+  --category-position: center;
+}
+
 .category-item:nth-child(3) {
-  --category-image: url("assets/cater-vegas-hero.png");
+  --category-image: url("assets/linens.jpeg");
+  --category-position: center;
 }
 
 .category-item:nth-child(4) {
-  --category-image: url("img/cocofilms-preview.jpg");
+  --category-image: url("assets/decor.jpeg");
+  --category-position: center;
 }
 
-.category-item:nth-child(5),
+.category-item:nth-child(5) {
+  --category-image: url("assets/tents.jpeg");
+  --category-position: center;
+}
+
 .category-item:nth-child(6) {
-  --category-image: url("img/la-apertura-preview.png");
+  --category-image: url("assets/tents.jpeg");
+  --category-position: center;
 }
 
 .category-item:nth-child(1) {

@@ -77,7 +77,7 @@ document.querySelectorAll(".calendar-grid button:not(.muted)").forEach((button) 
   button.addEventListener("click", () => {
     document.querySelectorAll(".calendar-grid button").forEach((day) => day.classList.remove("is-selected"));
     button.classList.add("is-selected");
-    showStep("industries");
+    window.setTimeout(() => showStep("industries"), 260);
   });
 });
 

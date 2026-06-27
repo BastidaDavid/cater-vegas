@@ -259,8 +259,8 @@ svg {
   display: grid;
   align-items: end;
   min-width: 0;
-  min-height: 620px;
-  padding: clamp(28px, 4vw, 68px) clamp(20px, 2.7vw, 48px);
+  min-height: clamp(430px, calc(100vh - 120px), 540px);
+  padding: clamp(20px, 3vw, 44px) clamp(16px, 2.1vw, 34px);
   isolation: isolate;
 }
 
@@ -290,7 +290,7 @@ svg {
 
 .industry-panel:not(:first-child) {
   margin-left: -2.4vw;
-  padding-left: clamp(42px, 5vw, 76px);
+  padding-left: clamp(34px, 4.8vw, 64px);
   clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
 }
 
@@ -316,11 +316,11 @@ svg {
 
 .panel-icon {
   position: absolute;
-  left: clamp(28px, 4vw, 86px);
-  top: 47%;
+  left: clamp(24px, 3.5vw, 64px);
+  top: clamp(32px, 11vh, 92px);
   display: grid;
-  width: 64px;
-  height: 64px;
+  width: clamp(52px, 4.7vw, 66px);
+  height: clamp(52px, 4.7vw, 66px);
   place-items: center;
   border: 1px solid rgba(16, 21, 19, 0.2);
   border-radius: 50%;
@@ -330,12 +330,12 @@ svg {
 }
 
 .industry-panel:not(:first-child) .panel-icon {
-  left: clamp(54px, 6vw, 92px);
+  left: clamp(42px, 5.4vw, 76px);
 }
 
 .panel-icon svg {
-  width: 29px;
-  height: 29px;
+  width: 26px;
+  height: 26px;
   fill: none;
   stroke: var(--ink);
   stroke-linecap: round;
@@ -351,9 +351,9 @@ svg {
 
 .panel-number {
   display: block;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   color: var(--accent);
-  font-size: clamp(1.05rem, 1.55vw, 1.35rem);
+  font-size: clamp(0.92rem, 1.18vw, 1.12rem);
   font-weight: 950;
   letter-spacing: 0.14em;
 }
@@ -363,7 +363,7 @@ svg {
   margin: 0;
   color: var(--ink);
   font-family: var(--sans);
-  font-size: clamp(1.95rem, 2.8vw, 3.35rem);
+  font-size: clamp(1.65rem, 2.25vw, 2.65rem);
   font-weight: 900;
   letter-spacing: -0.02em;
   line-height: 0.95;
@@ -371,24 +371,24 @@ svg {
 
 .panel-copy i {
   display: block;
-  width: 58px;
-  height: 5px;
-  margin: 22px 0;
+  width: 52px;
+  height: 4px;
+  margin: 14px 0;
   background: var(--accent);
 }
 
 .panel-copy p {
   max-width: 340px;
-  margin: 0 0 24px;
+  margin: 0 0 14px;
   color: #34403b;
-  font-size: clamp(0.92rem, 1.12vw, 1.12rem);
+  font-size: clamp(0.78rem, 0.92vw, 0.95rem);
   font-weight: 650;
-  line-height: 1.42;
+  line-height: 1.35;
 }
 
 .panel-copy a {
   color: var(--accent);
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 900;
 }
 
@@ -400,7 +400,7 @@ svg {
   display: grid;
   align-content: center;
   min-height: calc(100vh - 76px);
-  padding: clamp(22px, 3vw, 42px) 0 0;
+  padding: clamp(14px, 2vw, 26px) 0 0;
   background: var(--white);
   overflow: hidden;
 }
@@ -408,29 +408,29 @@ svg {
 .showroom-intro {
   display: grid;
   justify-items: center;
-  margin-bottom: clamp(18px, 3vw, 34px);
+  margin-bottom: clamp(12px, 2vw, 22px);
   padding: 0 clamp(22px, 5vw, 86px);
   text-align: center;
 }
 
 .showroom-intro span {
   display: inline-flex;
-  min-height: 44px;
+  min-height: 38px;
   align-items: center;
   justify-content: center;
-  padding: 0 34px;
+  padding: 0 28px;
   background: linear-gradient(135deg, #111614, #303833);
   color: var(--white);
-  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-size: clamp(0.86rem, 1.25vw, 1.08rem);
   font-weight: 850;
   letter-spacing: 0.24em;
   text-transform: uppercase;
 }
 
 .showroom-intro p {
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   color: #555c58;
-  font-size: clamp(0.95rem, 1.3vw, 1.12rem);
+  font-size: clamp(0.82rem, 1vw, 0.98rem);
   font-style: italic;
   font-weight: 750;
 }
@@ -439,7 +439,7 @@ svg {
   position: relative;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  min-height: clamp(430px, calc(100vh - 230px), 620px);
+  min-height: clamp(330px, calc(100vh - 235px), 460px);
   width: 100%;
   overflow: hidden;
   background:
@@ -457,7 +457,7 @@ svg {
   align-content: end;
   justify-items: start;
   min-width: 0;
-  padding: clamp(28px, 4vw, 60px) clamp(18px, 2.6vw, 40px);
+  padding: clamp(22px, 3vw, 40px) clamp(14px, 2vw, 28px);
   isolation: isolate;
   overflow: hidden;
   color: var(--ink);
@@ -492,7 +492,7 @@ svg {
 
 .category-item:not(:first-child) {
   margin-left: -2.6vw;
-  padding-left: clamp(42px, 5.6vw, 82px);
+  padding-left: clamp(34px, 5vw, 66px);
   clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%);
 }
 
@@ -546,10 +546,10 @@ svg {
 .category-icon {
   display: grid;
   position: absolute;
-  left: clamp(24px, 3.2vw, 52px);
-  top: clamp(28px, 4vw, 58px);
-  width: clamp(58px, 6vw, 86px);
-  height: clamp(58px, 6vw, 86px);
+  left: clamp(18px, 2.8vw, 42px);
+  top: clamp(18px, 3vw, 38px);
+  width: clamp(48px, 4.7vw, 68px);
+  height: clamp(48px, 4.7vw, 68px);
   place-items: center;
   border: 1px solid rgba(16, 21, 19, 0.2);
   border-radius: 50%;
@@ -560,7 +560,7 @@ svg {
 }
 
 .category-item:not(:first-child) .category-icon {
-  left: clamp(46px, 5.6vw, 78px);
+  left: clamp(34px, 5vw, 62px);
 }
 
 .category-icon svg {
@@ -577,7 +577,7 @@ svg {
   position: relative;
   z-index: 1;
   color: #050807;
-  font-size: clamp(1.45rem, 2.25vw, 2.45rem);
+  font-size: clamp(1.08rem, 1.58vw, 1.82rem);
   font-weight: 950;
   letter-spacing: -0.02em;
   line-height: 0.95;
@@ -585,9 +585,9 @@ svg {
 
 .category-item strong::before {
   display: block;
-  width: 56px;
-  height: 5px;
-  margin: 0 0 18px;
+  width: 46px;
+  height: 4px;
+  margin: 0 0 12px;
   content: "";
   background: var(--category-accent, var(--aqua));
 }
@@ -747,7 +747,7 @@ svg {
 
   .category-strip {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    min-height: 520px;
+    min-height: 400px;
   }
 
   .category-strip::before {
@@ -755,7 +755,7 @@ svg {
   }
 
   .category-item {
-    padding: 32px 20px;
+    padding: 24px 16px;
     transform: none;
   }
 
@@ -765,13 +765,13 @@ svg {
 
   .industry-panel,
   .industry-panel:not(:first-child) {
-    min-height: 520px;
-    padding: 34px 24px;
+    min-height: 430px;
+    padding: 28px 20px;
   }
 
   .industry-panel:not(:first-child) {
     margin-left: -2.6vw;
-    padding-left: clamp(44px, 5.8vw, 82px);
+    padding-left: clamp(36px, 5.6vw, 70px);
     clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
   }
 
@@ -785,8 +785,8 @@ svg {
 
   .industry-panel:not(:first-child) .panel-icon,
   .panel-icon {
-    left: clamp(30px, 4.6vw, 64px);
-    top: 36px;
+    left: clamp(24px, 4.4vw, 56px);
+    top: 28px;
   }
 }
 
@@ -831,9 +831,9 @@ svg {
   .category-item:not(:first-child),
   .category-item:first-child,
   .category-item:last-child {
-    min-height: 260px;
+    min-height: 220px;
     margin-left: 0;
-    padding: 112px 24px 34px;
+    padding: 96px 22px 28px;
     clip-path: none;
   }
 
@@ -853,25 +853,25 @@ svg {
 
   .industry-panel,
   .industry-panel:not(:first-child) {
-    min-height: 390px;
-    padding: 34px 24px;
+    min-height: 330px;
+    padding: 28px 22px;
   }
 
   .industry-panel:not(:first-child) .panel-icon,
   .panel-icon {
     left: 24px;
     top: 28px;
-    width: 62px;
-    height: 62px;
+    width: 56px;
+    height: 56px;
   }
 
   .panel-copy {
-    padding-top: 76px;
+    padding-top: 64px;
   }
 
   .panel-copy h1,
   .panel-copy h2 {
-    font-size: clamp(2rem, 11vw, 3.4rem);
+    font-size: clamp(1.85rem, 10vw, 3rem);
   }
 
   .site-footer {

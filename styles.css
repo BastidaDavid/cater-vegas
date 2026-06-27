@@ -245,6 +245,7 @@ svg {
 }
 
 .industry-hero {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   min-height: calc(100vh - 76px);
@@ -437,6 +438,11 @@ svg {
 .flow-back:hover {
   border-color: rgba(16, 21, 19, 0.28);
   background: rgba(255, 255, 255, 0.92);
+}
+
+.industry-back {
+  top: clamp(16px, 2.4vw, 30px);
+  left: clamp(20px, 3.4vw, 54px);
 }
 
 .showroom-intro {

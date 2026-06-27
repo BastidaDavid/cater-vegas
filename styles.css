@@ -675,9 +675,12 @@ svg {
     justify-content: flex-start;
   }
 
-  .industry-hero,
   .start-section {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .industry-hero {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .category-strip {
@@ -733,15 +736,27 @@ svg {
 
   .industry-panel,
   .industry-panel:not(:first-child) {
-    min-height: 460px;
-    margin-left: 0;
-    clip-path: none;
-    padding: 38px;
+    min-height: 520px;
+    padding: 34px 24px;
+  }
+
+  .industry-panel:not(:first-child) {
+    margin-left: -2.6vw;
+    padding-left: clamp(44px, 5.8vw, 82px);
+    clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
+  }
+
+  .industry-panel:first-child {
+    clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+  }
+
+  .industry-panel:last-child {
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
   }
 
   .industry-panel:not(:first-child) .panel-icon,
   .panel-icon {
-    left: 42px;
+    left: clamp(30px, 4.6vw, 64px);
     top: 36px;
   }
 }

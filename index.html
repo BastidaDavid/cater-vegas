@@ -1,225 +1,253 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Cater Vegas ofrece una experiencia premium para planear eventos privados, corporativos, bodas y catering de lujo en Las Vegas.">
-  <meta name="keywords" content="Las Vegas catering, corporate catering Las Vegas, wedding catering Las Vegas, convention catering, hotel catering Las Vegas, private event catering">
-  <meta name="theme-color" content="#050505">
-  <title>Cater Vegas | Event Galaxy</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Georgia,serif' font-size='24' fill='%23f4cf83'%3ECV%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://images.unsplash.com">
-  <link rel="stylesheet" href="style.css?v=tiny-orb-no-assistant-28">
+  <meta name="description" content="Cater Vegas conecta catering, F&amp;B, entertainment y hospedaje para eventos premium en Las Vegas.">
+  <meta name="keywords" content="Cater Vegas, Las Vegas catering, F&B Las Vegas, event entertainment Las Vegas, hospitality Las Vegas">
+  <meta name="theme-color" content="#ffffff">
+  <title>Cater Vegas | Industries</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23ffffff'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Georgia,serif' font-size='23' fill='%231b3324'%3ECV%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="cv-header" id="top">
-    <a class="cv-brand" href="#top" aria-label="Cater Vegas home">
-      <span class="cv-brand-crown" aria-hidden="true">
-        <svg viewBox="0 0 54 28">
-          <path d="M6 23h42M11 22l4-15 10 10 8-14 8 14 10-10 4 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="15" cy="6" r="2" fill="currentColor"/>
-          <circle cx="33" cy="3" r="2" fill="currentColor"/>
-          <circle cx="51" cy="6" r="2" fill="currentColor"/>
-        </svg>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Cater Vegas home">
+      <span class="brand-mark">CV</span>
+      <span class="brand-copy">
+        <strong>Cater Vegas</strong>
+        <small>Events & Hospitality</small>
       </span>
-      <span class="cv-brand-wordmark">CATER VEGAS</span>
-      <span class="cv-brand-subtitle">Events & Catering</span>
     </a>
 
-    <div class="cv-assistant-label" aria-label="Cater Vegas assistant">
-      <span aria-hidden="true">✦</span>
-      <strong></strong>
-      <p>Tu asistente inteligente para crear eventos inolvidables</p>
-    </div>
-
-    <div class="cv-header-actions">
-      <a class="cv-button cv-button-secondary" href="login.html">Iniciar sesión</a>
-      <a class="cv-button cv-button-primary" href="create-account.html">Crear cuenta</a>
-    </div>
+    <nav class="site-nav" aria-label="Principal">
+      <a href="#about">About Us</a>
+      <a href="#contact">Contact</a>
+      <a href="login.html">Login</a>
+      <a class="language-pill" href="#contact">Language <strong>EN</strong></a>
+    </nav>
   </header>
 
   <main>
-    <section class="cv-galaxy" id="event-galaxy" aria-labelledby="cv-stage-question">
-      <div class="cv-galaxy-shell">
-        <aside class="cv-intro-panel" aria-label="Guía Cater Vegas">
-          <h1 id="cv-stage-question">¿Qué estás organizando?</h1>
-          <p id="cv-stage-helper">Elige el tipo de evento y reorganizaré las opciones para construir tu propuesta ideal.</p>
-
-          <div class="cv-stage-actions">
-            <button class="cv-text-button" type="button" id="cv-back-button">Volver</button>
-            <button class="cv-text-button" type="button" id="cv-reset-button">Reiniciar</button>
-          </div>
-        </aside>
-
-        <section class="cv-orb-stage" aria-label="Constructor visual de evento">
-          <div class="cv-orb-field" id="cv-orb-field">
-            <div class="cv-orb" id="cv-orb" data-orb-theme="default">
-              <div class="cv-orb-image" aria-hidden="true"></div>
-              <div class="cv-orb-ring" aria-hidden="true"></div>
-              <div class="cv-orb-copy">
-                <span id="cv-orb-label">Cater Vegas</span>
-                <strong id="cv-orb-title">Evento inolvidable</strong>
-                <em id="cv-orb-estimate">Estimado actual: pendiente</em>
-              </div>
-            </div>
-
-            <div class="cv-node-layer" id="cv-node-layer" aria-live="polite"></div>
-            <div class="cv-thinking-status" id="cv-thinking-status" aria-live="polite" aria-hidden="true">Ajustando opciones...</div>
-          </div>
-
-          <div class="cv-center-actions">
-            <button class="cv-button cv-button-secondary" type="button" id="cv-services-continue" hidden>Continuar</button>
-            <button class="cv-button cv-button-primary" type="button" id="cv-summary-action" hidden>Ver propuesta</button>
-          </div>
-        </section>
-
-        <aside class="cv-summary" aria-label="Resumen en tiempo real">
-          <div class="cv-summary-header">
-            <span>Resumen en tiempo real</span>
-            <strong id="quoteTotal">Estimado actual</strong>
-          </div>
-
-          <dl class="cv-summary-list">
-            <div>
-              <dt data-icon="event">Tipo de evento</dt>
-              <dd id="cv-summary-event">-</dd>
-            </div>
-            <div>
-              <dt data-icon="guests">Invitados</dt>
-              <dd id="cv-summary-guests">-</dd>
-            </div>
-            <div>
-              <dt data-icon="style">Estilo</dt>
-              <dd id="cv-summary-style">-</dd>
-            </div>
-            <div>
-              <dt data-icon="date">Fecha</dt>
-              <dd id="cv-summary-date">-</dd>
-            </div>
-            <div>
-              <dt data-icon="location">Lugar</dt>
-              <dd id="cv-summary-location">-</dd>
-            </div>
-            <div>
-              <dt data-icon="budget">Presupuesto</dt>
-              <dd id="cv-summary-budget">-</dd>
-            </div>
-            <div>
-              <dt data-icon="services">Servicios</dt>
-              <dd id="cv-summary-services">-</dd>
-            </div>
-          </dl>
-
-          <div class="cv-estimate-card">
-            <span>Estimado actual</span>
-            <strong id="cv-estimated-total">$0</strong>
-            <p>Se actualizará conforme respondes.</p>
-          </div>
-
-          <button class="cv-summary-detail" type="button" id="cv-summary-detail">
-            <span>Ver resumen detallado</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-        </aside>
-      </div>
-
-      <div class="cv-bottom-bar">
-        <div class="cv-progress-panel">
-          <div class="cv-progress-meter" aria-label="Porcentaje de progreso">
-            <span>Tu progreso</span>
-            <div class="cv-progress-track" aria-hidden="true">
-              <i id="cv-progress-fill"></i>
-            </div>
-            <strong id="cv-progress-value">0%</strong>
-          </div>
-
-          <nav class="cv-timeline" aria-label="Progreso del evento">
-            <button type="button" data-stage-target="event" data-step="01" class="is-active">Evento</button>
-            <button type="button" data-stage-target="guests" data-step="02">Invitados</button>
-            <button type="button" data-stage-target="style" data-step="03">Estilo</button>
-            <button type="button" data-stage-target="services" data-step="04">Servicios</button>
-            <button type="button" data-stage-target="summary" data-step="05">Resumen</button>
-            <button type="button" data-stage-target="proposal" data-step="06">Propuesta</button>
-          </nav>
+    <section class="calendar-hero" id="calendar" aria-labelledby="calendar-title">
+      <div class="booking-shell" aria-label="Calendar design options">
+        <div class="booking-heading">
+          <p class="eyebrow">Start with the date</p>
         </div>
 
-        <div class="cv-inspiration" aria-label="Inspiración de eventos">
-          <button class="cv-inspiration-arrow cv-inspiration-arrow-prev" type="button" data-inspiration-scroll="prev" aria-label="Ver inspiración anterior">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M15 5l-7 7 7 7"></path>
-            </svg>
-          </button>
-          <div class="cv-inspiration-copy">
-            <strong>¿Necesitas inspiración?</strong>
-            <span>Explora ideas reales de eventos en Las Vegas.</span>
+        <div class="calendar-card compact-calendar" aria-label="June 2026 compact month calendar">
+          <div class="calendar-card-header">
+            <button type="button" aria-label="Previous month">&lt;</button>
+            <strong>June 2026</strong>
+            <button type="button" aria-label="Next month">&gt;</button>
           </div>
-          <div class="cv-inspiration-track" id="cv-inspiration-track">
-            <button class="cv-inspiration-card" type="button" data-inspiration="wedding"><span>Bodas elegantes</span></button>
-            <button class="cv-inspiration-card" type="button" data-inspiration="birthday"><span>Cumpleaños de lujo</span></button>
-            <button class="cv-inspiration-card" type="button" data-inspiration="corporate"><span>Eventos corporativos</span></button>
-            <button class="cv-inspiration-card" type="button" data-inspiration="private-party"><span>Fiestas privadas</span></button>
-            <button class="cv-inspiration-card" type="button" data-inspiration="baby-shower"><span>Baby showers</span></button>
-            <button class="cv-inspiration-card" type="button" data-inspiration="graduation"><span>Graduaciones</span></button>
+
+          <div class="calendar-grid" aria-label="Calendar days">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            <button type="button" class="muted">31</button>
+            <button type="button">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+            <button type="button">4</button>
+            <button type="button">5</button>
+            <button type="button">6</button>
+            <button type="button">7</button>
+            <button type="button">8</button>
+            <button type="button">9</button>
+            <button type="button">10</button>
+            <button type="button">11</button>
+            <button type="button">12</button>
+            <button type="button">13</button>
+            <button type="button">14</button>
+            <button type="button">15</button>
+            <button type="button">16</button>
+            <button type="button">17</button>
+            <button type="button" class="is-selected">18</button>
+            <button type="button">19</button>
+            <button type="button">20</button>
+            <button type="button">21</button>
+            <button type="button">22</button>
+            <button type="button">23</button>
+            <button type="button">24</button>
+            <button type="button">25</button>
+            <button type="button">26</button>
+            <button type="button">27</button>
+            <button type="button">28</button>
+            <button type="button">29</button>
+            <button type="button">30</button>
+            <button type="button" class="muted">1</button>
+            <button type="button" class="muted">2</button>
+            <button type="button" class="muted">3</button>
+            <button type="button" class="muted">4</button>
           </div>
-          <button class="cv-inspiration-arrow cv-inspiration-arrow-next" type="button" data-inspiration-scroll="next" aria-label="Ver más inspiración">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
         </div>
       </div>
+    </section>
 
-      <form class="cv-legacy-state" id="quoteForm" aria-hidden="true">
-        <input type="hidden" id="budgetTier" value="">
-        <select id="eventType" tabindex="-1">
-          <option value="">Pendiente</option>
-          <option value="wedding">Boda</option>
-          <option value="birthday">Cumpleaños</option>
-          <option value="corporate">Corporativo</option>
-          <option value="baby-shower">Baby Shower</option>
-          <option value="anniversary">Aniversario</option>
-          <option value="graduation">Graduación</option>
-          <option value="farewell">Despedida</option>
-          <option value="private-party">Fiesta privada</option>
-          <option value="other">Otro evento</option>
-        </select>
-        <input type="number" id="guestCount" value="0" tabindex="-1">
-        <select id="menuStyle" tabindex="-1">
-          <option value="">Pendiente</option>
-          <option value="essential">Esencial</option>
-          <option value="premium">Premium</option>
-          <option value="luxury">Luxury</option>
-          <option value="custom">Personalizado</option>
-        </select>
-        <select id="serviceLevel" tabindex="-1">
-          <option value="">Pendiente</option>
-          <option value="delivery">Catering</option>
-          <option value="full">Servicio completo</option>
-          <option value="vip">Luxury VIP</option>
-        </select>
-        <select id="addonPackage" tabindex="-1">
-          <option value="">Pendiente</option>
-          <option value="standard">Servicios base</option>
-          <option value="bar">Barra Premium</option>
-          <option value="production">Producción completa</option>
-        </select>
-        <input type="date" id="eventDate" tabindex="-1">
-        <input type="time" id="eventTime" value="18:00" tabindex="-1">
-        <span id="depositDue"></span>
-        <span id="profitMargin"></span>
-        <span id="beoflowForecast"></span>
-        <span id="planBudget"></span>
-        <span id="planEvent"></span>
-        <span id="planMenu"></span>
-        <span id="planServices"></span>
-        <span id="menuRecommendation"></span>
-        <button type="submit" data-planner-submit tabindex="-1">Crear solicitud</button>
-      </form>
+    <section class="industry-hero is-hidden-step" id="industries" aria-label="Cater Vegas industries">
+      <article class="industry-panel industry-catering">
+        <div class="panel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 13h14M7 13a5 5 0 0 1 10 0M12 5v3M9 5h6M4 17h16"></path>
+          </svg>
+        </div>
+        <div class="panel-copy">
+          <span class="panel-number">01</span>
+          <h1>Catering</h1>
+          <i></i>
+          <p>Premium menus, plating, staffing and full-service event execution.</p>
+          <a href="#catering">Start with Catering</a>
+        </div>
+      </article>
+
+      <article class="industry-panel industry-fb">
+        <div class="panel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 3h10l-1 8a4 4 0 0 1-8 0L7 3zM12 15v6M9 21h6"></path>
+          </svg>
+        </div>
+        <div class="panel-copy">
+          <span class="panel-number">02</span>
+          <h2>F&amp;B</h2>
+          <i></i>
+          <p>Food and beverage programs for venues, hotels, pop-ups and recurring events.</p>
+          <a href="#start" data-start-option="F&B">Start with F&amp;B</a>
+        </div>
+      </article>
+
+      <article class="industry-panel industry-entertainment">
+        <div class="panel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 18V5l11-2v13M9 9l11-2M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm11-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+          </svg>
+        </div>
+        <div class="panel-copy">
+          <span class="panel-number">03</span>
+          <h2>Entertainment</h2>
+          <i></i>
+          <p>DJ, live talent, production timing and guest-energy planning for Las Vegas events.</p>
+          <a href="#start" data-start-option="Entertainment">Start with Entertainment</a>
+        </div>
+      </article>
+
+      <article class="industry-panel industry-hotel">
+        <div class="panel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 21V8l8-5 8 5v13M8 21v-7h8v7M9 10h.01M12 10h.01M15 10h.01"></path>
+          </svg>
+        </div>
+        <div class="panel-copy">
+          <span class="panel-number">04</span>
+          <h2>Hospedaje</h2>
+          <i></i>
+          <p>Hotel blocks, VIP arrivals, transportation notes and concierge coordination.</p>
+          <a href="#start" data-start-option="Hospedaje">Start with Hospedaje</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="catering-showroom is-hidden-step" id="catering" aria-labelledby="catering-title">
+      <div class="showroom-intro">
+        <span id="catering-title">Catering showroom</span>
+        <p>Choose the catering area you want to build first.</p>
+      </div>
+
+      <div class="category-strip" aria-label="Catering categories">
+        <a class="category-item" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M17 25c0-6 30-6 30 0s-30 6-30 0zM20 28c2 4 22 4 24 0M32 31v20M24 51h16"></path>
+            </svg>
+          </span>
+          <strong>Tables</strong>
+        </a>
+
+        <a class="category-item" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M21 17h22v18H21zM18 35h28M23 35l-3 18M41 35l3 18M24 24h16"></path>
+            </svg>
+          </span>
+          <strong>Chairs</strong>
+        </a>
+
+        <a class="category-item" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M22 16l20 8-10 24-20-8 10-24zM36 20l12 8-10 24-12-8M24 26l13 6M20 36l13 6"></path>
+            </svg>
+          </span>
+          <strong>Linen</strong>
+        </a>
+
+        <a class="category-item" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M21 49h22M32 16v33M22 28h20M22 28l-5 13M42 28l5 13M26 16h12M25 22h14"></path>
+              <path d="M18 41h8M38 41h8"></path>
+            </svg>
+          </span>
+          <strong>Decor</strong>
+        </a>
+
+        <a class="category-item" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M14 49V26l18-11 18 11v23M14 26h36M20 49V31M44 49V31M25 31h14"></path>
+            </svg>
+          </span>
+          <strong>Tents</strong>
+        </a>
+
+        <a class="category-item view-all" href="#start" data-start-option="Catering">
+          <span class="category-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M24 16l16 16-16 16"></path>
+            </svg>
+          </span>
+          <strong>View all<br>products</strong>
+        </a>
+      </div>
+    </section>
+
+    <section class="start-section is-hidden-step" id="start" aria-labelledby="start-title">
+      <div>
+        <p class="eyebrow">Choose where to start</p>
+        <h2 id="start-title">Your event path starts with <span id="selected-path">Catering</span>.</h2>
+        <p id="selected-path-copy">
+          We will begin with menu direction, guest count, service flow and staffing needs, then connect the rest of the event around it.
+        </p>
+      </div>
+
+      <div class="start-options" aria-label="Starting options">
+        <button type="button" class="is-active" data-path="Catering">Catering</button>
+        <button type="button" data-path="F&B">F&amp;B</button>
+        <button type="button" data-path="Entertainment">Entertainment</button>
+        <button type="button" data-path="Hospedaje">Hospedaje</button>
+      </div>
+    </section>
+
+    <section class="about-section is-hidden-step" id="about">
+      <p class="eyebrow">Cater Vegas</p>
+      <h2>Hospitality, food, entertainment and stay planning in one clean system.</h2>
+      <p>
+        We organize the moving parts behind destination events: menus, service, venue needs, talent, hotel details and guest experience. The page stays white and polished, while the operation behind it stays precise.
+      </p>
+    </section>
+
+    <section class="contact-section is-hidden-step" id="contact">
+      <p class="eyebrow">Start Planning</p>
+      <h2>Tell us what you are building in Las Vegas.</h2>
+      <a class="contact-button" href="mailto:info@bastidasystems.com">info@bastidasystems.com</a>
     </section>
   </main>
 
-  <script src="script.js?v=tiny-orb-no-assistant-28"></script>
+  <footer class="site-footer is-hidden-step">
+    <span>Cater Vegas</span>
+    <p>Events, F&amp;B, Entertainment &amp; Hospitality.</p>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
+

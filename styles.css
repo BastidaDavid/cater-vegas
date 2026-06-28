@@ -318,19 +318,14 @@ svg {
 
 .industry-panel::before {
   z-index: -2;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.9)),
-    var(--panel-image);
-  background-size: cover;
-  background-position: center;
-  filter: saturate(0.82);
+  background: #fff;
 }
 
 .industry-panel::after {
   z-index: -1;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.92) 78%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.32));
+    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(247, 248, 245, 0.84) 80%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.62));
 }
 
 .industry-panel:not(:first-child) {

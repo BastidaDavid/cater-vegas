@@ -25,14 +25,24 @@ function showStep(stepId) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function markIndustryPanel(link) {
+  const panel = link.closest(".industry-panel");
+  if (!panel) return false;
+
+  document.querySelectorAll(".industry-panel").forEach((item) => item.classList.remove("is-selected"));
+  panel.classList.add("is-selected");
+  return true;
+}
+
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
     const href = link.getAttribute("href");
     const targetId = href.slice(1);
+    const isIndustrySelection = markIndustryPanel(link);
 
     if (stepIds.includes(targetId)) {
       event.preventDefault();
-      showStep(targetId);
+      window.setTimeout(() => showStep(targetId), isIndustrySelection ? 180 : 0);
       return;
     }
 
@@ -41,6 +51,14 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
     event.preventDefault();
     target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+
+document.querySelectorAll(".industry-panel").forEach((panel) => {
+  panel.addEventListener("click", (event) => {
+    if (event.target.closest("a")) return;
+
+    panel.querySelector('a[href^="#"]')?.click();
   });
 });
 

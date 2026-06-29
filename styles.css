@@ -542,23 +542,22 @@ svg {
 
 .builder-chip {
   justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  max-width: calc(100% - 160px);
-  min-height: 46px;
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
   margin: 0 0 clamp(8px, 1vw, 12px);
-  padding: 7px 18px 7px 8px;
+  padding: 0;
   border: 1px solid rgba(16, 21, 19, 0.16);
-  border-radius: 999px;
+  border-radius: 50%;
   background: rgba(255, 253, 248, 0.82);
   box-shadow: 0 14px 38px rgba(26, 37, 31, 0.08);
 }
 
 .builder-chip-icon {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   place-items: center;
   border-radius: 50%;
   background: #111614;
@@ -566,8 +565,8 @@ svg {
 }
 
 .builder-chip-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -1152,8 +1151,7 @@ svg {
   }
 
   .builder-chip {
-    max-width: calc(100% - 36px);
-    justify-self: stretch;
+    justify-self: center;
     margin: 0 18px 12px;
   }
 
